@@ -4,23 +4,15 @@ package com.emm.elephorm.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
-import com.emm.elephorm.app.ElephormApp;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.emm.elephorm.models.Category;
+import com.emm.elephorm.models.Subcategory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,17 +28,15 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
-    private String TAG = TabFragment2.class.getSimpleName();
+    private String TAG = TabFragment2.class.getSimpleName(); // A utiliser pour filter les log | TODO ajouter en global
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ExpandableListAdapter listAdapter;
 
-    private View v;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
+        View v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
 
         expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
@@ -78,63 +68,54 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
         prepareListCategory();
     }
 
+    /**
+     * Récupere la liste de catégories et sous-catégories, et actualise la liste
+     */
+
+    protected List<Category> categories = new ArrayList<>();
+    protected List<Subcategory> subcategory = new ArrayList<>();
+
     private void prepareListCategory() {
+
+        listDataHeader.clear();
+        listDataChild.clear();
 
         swipeRefreshLayout.setRefreshing(true);
 
-        JsonArrayRequest req = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
-            new Response.Listener<JSONArray>() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    Log.d(TAG, response.toString());
+        Category.getCategoryList(true, new Category.updateCallback() {
+            @Override
+            public void onUpdateFinished(List<Category> cats) {
+                categories = cats;
+                for (int i = 0; i < categories.size(); i++) {
 
-                    if (response.length() > 0) {
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                JSONObject obj = response.getJSONObject(i);
+                    Category obj = categories.get(i);
 
-                                String id = obj.getString("_id");
-                                String title = obj.getString("title");
+                    String id = obj.getId();
+                    String title = obj.getTitle();
 
-                                listDataHeader.add(title);
+                    listDataHeader.add(title);
 
-                                List<String> subCatList = new ArrayList<>();
-                                JSONArray subCat = obj.getJSONArray("subcategories");
+                    subcategory = categories.get(i).getSubcategories();
+                    List<String> subCatList = new ArrayList<>();
 
-                                for (int ii = 0; ii < subCat.length(); ii++) {
+                    for (int j = 0; j < subcategory.size(); j++) {
 
-                                    JSONObject subObj = subCat.getJSONObject(ii);
-                                    String subTitle = subObj.getString("title");
+                        Subcategory subObj = subcategory.get(j);
+                        String subTitle = subObj.getTitle();
 
-                                    subCatList.add(subTitle);
-                                }
-
-                                listDataChild.put(listDataHeader.get(i), subCatList);
-
-                            } catch (JSONException e) {
-                                Log.e(TAG, "JSON Parsing error: " + e.getMessage());
-                            }
-                        }
-                        listAdapter.notifyDataSetChanged();
+                        subCatList.add(subTitle);
                     }
 
-                    // stopping swipe refresh
-                    swipeRefreshLayout.setRefreshing(false);
+                    listDataChild.put(listDataHeader.get(i), subCatList);
                 }
-            }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.e(TAG, "Server Error: " + error.getMessage());
 
-                Toast.makeText(v.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                listAdapter.notifyDataSetChanged();
 
                 // stopping swipe refresh
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
 
-        ElephormApp.getInstance().addToRequestQueue(req);
     }
-
 
 }
