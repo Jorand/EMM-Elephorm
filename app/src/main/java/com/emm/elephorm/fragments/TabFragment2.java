@@ -3,6 +3,8 @@ package com.emm.elephorm.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,12 +21,17 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TabFragment2 extends Fragment {
+public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    private String TAG = TabFragment2.class.getSimpleName();
+
+    private String URL_CAT = "http://eas.elephorm.com/api/v1/categories";
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ExpandableListAdapter listAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,12 +39,35 @@ public class TabFragment2 extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
 
         expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
-        prepareListData();
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+
+        listDataHeader = new ArrayList<>();
+        listDataChild = new HashMap<>();
+
         listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
 
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+
+                    //prepareListData();
+                }
+            }
+        );
+
         //expListView.setDivider(null);
+
+
         return v;
+    }
+
+    @Override
+    public void onRefresh() {
+        //prepareListData();
     }
 
     private void prepareListData() {
