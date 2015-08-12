@@ -40,6 +40,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
         expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
 
         listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
