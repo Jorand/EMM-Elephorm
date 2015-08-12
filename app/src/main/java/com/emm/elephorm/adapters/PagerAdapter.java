@@ -1,8 +1,12 @@
-package com.emm.elephorm;
+package com.emm.elephorm.adapters;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+
+import com.emm.elephorm.fragments.TabFragment1;
+import com.emm.elephorm.fragments.TabFragment2;
+import com.emm.elephorm.fragments.TabFragment3;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
