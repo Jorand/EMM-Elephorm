@@ -2,7 +2,6 @@ package com.emm.elephorm;
 
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -48,9 +47,9 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_title_1));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_title_2));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.tab_title_3));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_action_home));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_action_sort));
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.ic_action_person));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);

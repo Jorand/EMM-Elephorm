@@ -3,7 +3,7 @@
 
      <string name="action_settings">Settings</string>
 
-    <string name="tab_title_1">Tab 1</string>
-    <string name="tab_title_2">Tab 2</string>
-    <string name="tab_title_3">Tab 3</string>
+    <string name="tab_title_1">Home</string>
+    <string name="tab_title_2">Tous les cours</string>
+    <string name="tab_title_3">Mes cours</string>
 </resources>
