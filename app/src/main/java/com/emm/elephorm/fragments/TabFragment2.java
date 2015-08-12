@@ -4,6 +4,7 @@ package com.emm.elephorm.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,8 @@ import java.util.List;
 public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     ExpandableListView expListView;
-    List<String> listDataHeader;
-    HashMap<String, List<String>> listDataChild;
+    List<String> listDataHeader = new ArrayList<>();
+    HashMap<String, List<String>> listDataChild = new HashMap<>();
 
     private String TAG = TabFragment2.class.getSimpleName(); // A utiliser pour filter les log | TODO ajouter en global
 
@@ -41,9 +42,6 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
         expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
-
-        listDataHeader = new ArrayList<>();
-        listDataChild = new HashMap<>();
 
         listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);

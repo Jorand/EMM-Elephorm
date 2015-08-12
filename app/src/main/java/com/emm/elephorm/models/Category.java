@@ -1,5 +1,7 @@
 package com.emm.elephorm.models;
 
+import android.util.Log;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
@@ -61,6 +63,7 @@ public class Category {
                     new Response.Listener<JSONArray>() {
                         @Override
                         public void onResponse(JSONArray response) {
+                            categories.clear();
                             JSONObject obj = null;
                             for (int i = 0; i < response.length(); i++) {
                                 try {
