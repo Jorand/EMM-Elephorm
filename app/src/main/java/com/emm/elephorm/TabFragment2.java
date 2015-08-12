@@ -33,7 +33,7 @@ public class TabFragment2 extends Fragment {
         listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
         expListView.setAdapter(listAdapter);
 
-        expListView.setDivider(null);
+        //expListView.setDivider(null);
         return v;
     }
 
