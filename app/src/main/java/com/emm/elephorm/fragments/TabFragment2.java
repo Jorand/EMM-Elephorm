@@ -3,13 +3,24 @@ package com.emm.elephorm.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
+import com.emm.elephorm.app.ElephormApp;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,118 +30,110 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TabFragment2 extends Fragment {
+public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
 
+    private String TAG = TabFragment2.class.getSimpleName();
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ExpandableListAdapter listAdapter;
+
+    private View v;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        final View v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
+        v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
 
         expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
-        prepareListData();
-        listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
-        expListView.setAdapter(listAdapter);
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
 
-        expListView.setDivider(null);
-        return v;
-    }
-
-    private void prepareListData() {
         listDataHeader = new ArrayList<>();
         listDataChild = new HashMap<>();
 
-        // Adding child data
-        listDataHeader.add("3D");
-        listDataHeader.add("Code");
-        listDataHeader.add("Infographie");
-        listDataHeader.add("Web & Mobiles");
-        listDataHeader.add("Photographie");
-        listDataHeader.add("Vidéo & VFX");
-        listDataHeader.add("Audio");
-        listDataHeader.add("Bureautique");
-        listDataHeader.add("Business");
+        listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
+        expListView.setAdapter(listAdapter);
+        //expListView.setDivider(null);
 
-        // Adding child data
-        List<String> D3 = new ArrayList<>();
-        D3.add("The Shawshank Redemption");
-        D3.add("375 tutos 3D gratuits");
-        D3.add("3ds Max31");
-        D3.add("ArchiCAD");
-        D3.add("Artlantis");
-        D3.add("AutoCAD");
-        D3.add("Blender");
-        D3.add("Cinema 4D");
-        D3.add("Droit d'Auteur");
-        D3.add("Game Design");
-        D3.add("Jeux vidéo");
-        D3.add("KeyShot");
+        swipeRefreshLayout.setOnRefreshListener(this);
 
-        List<String> code = new ArrayList<>();
-        code.add("The Shawshank Redemption");
-        code.add("375 tutos 3D gratuits");
-        code.add("3ds Max31");
-        code.add("ArchiCAD");
-        code.add("Artlantis");
-        code.add("AutoCAD");
-        code.add("Blender");
-        code.add("Cinema 4D");
-        code.add("Droit d'Auteur");
-        code.add("Game Design");
-        code.add("Jeux vidéo");
-        code.add("KeyShot");
+        swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
 
-        List<String> infographie = new ArrayList<>();
-        infographie.add("The Shawshank Redemption");
-        infographie.add("375 tutos 3D gratuits");
-        infographie.add("3ds Max31");
-        infographie.add("ArchiCAD");
+                    prepareListCategory();
+                }
+            }
+        );
 
-        List<String> wM = new ArrayList<>();
-        wM.add("The Shawshank Redemption");
-        wM.add("375 tutos 3D gratuits");
-        wM.add("3ds Max31");
-        wM.add("ArchiCAD");
+        return v;
+    }
 
-        List<String> photo = new ArrayList<>();
-        photo.add("The Shawshank Redemption");
-        photo.add("375 tutos 3D gratuits");
-        photo.add("3ds Max31");
-        photo.add("ArchiCAD");
+    @Override
+    public void onRefresh() {
+        prepareListCategory();
+    }
 
-        List<String> vV = new ArrayList<>();
-        vV.add("The Shawshank Redemption");
-        vV.add("375 tutos 3D gratuits");
-        vV.add("3ds Max31");
-        vV.add("ArchiCAD");
+    private void prepareListCategory() {
 
-        List<String> audio = new ArrayList<>();
-        audio.add("The Shawshank Redemption");
-        audio.add("375 tutos 3D gratuits");
+        swipeRefreshLayout.setRefreshing(true);
 
-        List<String> bureautique = new ArrayList<>();
-        bureautique.add("The Shawshank Redemption");
-        bureautique.add("375 tutos 3D gratuits");
-        bureautique.add("3ds Max31");
-        bureautique.add("ArchiCAD");
+        JsonArrayRequest req = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
+            new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d(TAG, response.toString());
 
-        List<String> business = new ArrayList<>();
-        business.add("The Shawshank Redemption");
-        business.add("375 tutos 3D gratuits");
+                    if (response.length() > 0) {
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject obj = response.getJSONObject(i);
 
-        listDataChild.put(listDataHeader.get(0), D3); // Header, Child data
-        listDataChild.put(listDataHeader.get(1), code);
-        listDataChild.put(listDataHeader.get(2), infographie);
-        listDataChild.put(listDataHeader.get(3), wM);
-        listDataChild.put(listDataHeader.get(4), photo);
-        listDataChild.put(listDataHeader.get(5), vV);
-        listDataChild.put(listDataHeader.get(6), audio);
-        listDataChild.put(listDataHeader.get(7), bureautique);
-        listDataChild.put(listDataHeader.get(8), business);
+                                String id = obj.getString("_id");
+                                String title = obj.getString("title");
+
+                                listDataHeader.add(title);
+
+                                List<String> subCatList = new ArrayList<>();
+                                JSONArray subCat = obj.getJSONArray("subcategories");
+
+                                for (int ii = 0; ii < subCat.length(); ii++) {
+
+                                    JSONObject subObj = subCat.getJSONObject(ii);
+                                    String subTitle = subObj.getString("title");
+
+                                    subCatList.add(subTitle);
+                                }
+
+                                listDataChild.put(listDataHeader.get(i), subCatList);
+
+                            } catch (JSONException e) {
+                                Log.e(TAG, "JSON Parsing error: " + e.getMessage());
+                            }
+                        }
+                        listAdapter.notifyDataSetChanged();
+                    }
+
+                    // stopping swipe refresh
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Server Error: " + error.getMessage());
+
+                Toast.makeText(v.getContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+
+                // stopping swipe refresh
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        ElephormApp.getInstance().addToRequestQueue(req);
     }
 
 
