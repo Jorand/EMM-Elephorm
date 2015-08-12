@@ -1,4 +1,4 @@
-package com.emm.elephorm;
+package com.emm.elephorm.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+
+import com.emm.elephorm.R;
 
 import java.util.HashMap;
 import java.util.List;
