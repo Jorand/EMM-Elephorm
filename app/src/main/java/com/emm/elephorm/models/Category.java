@@ -43,12 +43,18 @@ public class Category {
         }
     }
 
+    //define callback interface
+    public interface updateCallback {
+        void onUpdateFinished(List<Category> categories);
+    }
+
     /**
      * Renvoie le tableau des catégories et sous-catégories actuel
      * @param update : true s'il faut mettre les données des catégories à jour, false sinon
      * @return
      */
-    public static List<Category> getCategoryList(boolean update) {
+    public static void getCategoryList(boolean update, updateCallback cb) {
+        final updateCallback callback = cb;
         if(update) {
             categories.clear();
             JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
@@ -64,6 +70,7 @@ public class Category {
                                     e.printStackTrace();
                                 }
                             }
+                            callback.onUpdateFinished(categories);
                         }
                     },
                     new Response.ErrorListener() {
@@ -74,9 +81,9 @@ public class Category {
                     }
             );
             ElephormApp.getInstance().getRequestQueue().add(request);
+        } else {
+            callback.onUpdateFinished(categories);
         }
-
-        return categories;
     }
 
     /** Getters **/

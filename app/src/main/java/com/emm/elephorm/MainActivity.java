@@ -4,11 +4,18 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 
 import com.emm.elephorm.adapters.PagerAdapter;
+import com.emm.elephorm.models.Category;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppActivity {
+
+    protected List<Category> categories = new ArrayList<Category>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,7 +23,12 @@ public class MainActivity extends AppActivity {
         setContentView(R.layout.activity_main);
 
         initTabBar();
-
+        Category.getCategoryList(true, new Category.updateCallback() {
+            @Override
+            public void onUpdateFinished(List<Category> cats) {
+                categories = cats;
+            }
+        });
     }
 
     @Override
