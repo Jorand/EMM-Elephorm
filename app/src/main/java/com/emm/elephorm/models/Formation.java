@@ -75,6 +75,8 @@ public class Formation {
         }
     }
 
+
+
     /**
      * Met à jour l'avancement dans la formation
      */

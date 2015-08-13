@@ -58,26 +58,31 @@ public class TabFragment1 extends Fragment {
         return v;
     }
 
-    private Formation f = new Formation();
-    private Formation f1 = new Formation();
+    //private Formation f = new Formation();
+    //private Formation f1 = new Formation();
+
+    protected List<Category> categories = new ArrayList<>();
+    protected List<Subcategory> subcategory = new ArrayList<>();
 
     private void prepareListFormations() {
 
-        f.setTitle("Giant Water Balloons and Fireworks - The Slow-Mo-guy in lol");
-        f.setSubtitle("SQUEEZIE");
-        f.setDescription("Angular JS");
-        f.setImages("http://api.androidhive.info/json/movies/1.jpg");
+        /*
 
-        formationList.add(f);
+        categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
+            @Override
+            public void onUpdateFinished(List<Formation> formations) {
 
-        f1.setTitle("TITRE EN CAP");
-        f1.setSubtitle("Experiemnt");
-        f1.setDescription("Java Android");
-        f1.setImages("http://api.androidhive.info/json/movies/2.jpg");
+                for (int i = 0; i < formations.size(); i++) {
 
-        formationList.add(f1);
+                    Formation obj = formations.get(i);
 
-        adapter.notifyDataSetChanged();
+                    formationList.add(obj);
+
+                    adapter.notifyDataSetChanged();
+                }
+            }
+        });
+        */
 
 
     }

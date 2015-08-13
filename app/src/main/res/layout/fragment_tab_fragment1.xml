@@ -30,6 +30,14 @@
         android:background="@drawable/list_container_border"
         android:layout_below="@+id/home_list_1">
 
+        <TextView
+            android:id="@+id/TestheaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="@color/ColorTitle"
+            android:text="Recommandations" />
+
         <ListView
             android:id="@+id/home_list_2"
             android:layout_width="fill_parent"

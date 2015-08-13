@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.ListView;
 
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
@@ -27,8 +28,7 @@ import java.util.List;
 public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     ExpandableListView expListView;
-    List<String> listDataHeader = new ArrayList<>();
-    HashMap<String, List<String>> listDataChild = new HashMap<>();
+    ArrayList<Category> listCategories = new ArrayList<>();
 
     private String TAG = TabFragment2.class.getSimpleName(); // A utiliser pour filter les log | TODO ajouter en global
 
@@ -44,7 +44,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
 
-        listAdapter = new ExpandableListAdapter(v.getContext(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(v.getContext(), listCategories);
         expListView.setAdapter(listAdapter);
         //expListView.setDivider(null);
 
@@ -59,6 +59,18 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
                 }
             }
         );
+
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Log.i(TAG, "item " + childPosition + " of group " + groupPosition + " clicked." + id);
+
+                Subcategory obj = listCategories.get(groupPosition).getSubcategories().get(childPosition);
+
+                Log.d(TAG, String.valueOf(obj));
+                return false;
+            }
+        });
 
         return v;
     }
@@ -77,8 +89,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
     private void prepareListCategory() {
 
-        listDataHeader.clear();
-        listDataChild.clear();
+        listCategories.clear();
 
         swipeRefreshLayout.setRefreshing(true);
 
@@ -89,24 +100,8 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
                 for (int i = 0; i < categories.size(); i++) {
 
                     Category obj = categories.get(i);
+                    listCategories.add(obj);
 
-                    String id = obj.getId();
-                    String title = obj.getTitle();
-
-                    listDataHeader.add(title);
-
-                    subcategory = categories.get(i).getSubcategories();
-                    List<String> subCatList = new ArrayList<>();
-
-                    for (int j = 0; j < subcategory.size(); j++) {
-
-                        Subcategory subObj = subcategory.get(j);
-                        String subTitle = subObj.getTitle();
-
-                        subCatList.add(subTitle);
-                    }
-
-                    listDataChild.put(listDataHeader.get(i), subCatList);
                 }
 
                 listAdapter.notifyDataSetChanged();
