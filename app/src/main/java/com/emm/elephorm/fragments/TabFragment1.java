@@ -53,12 +53,12 @@ public class TabFragment1 extends Fragment {
         adapter = new CustomListAdapter((Activity) v.getContext(), formationList);
         listView2.setAdapter(adapter);
 
-        prepareListFormations();
+        /*prepareListFormations();*/
 
         return v;
     }
 
-    private Formation f = new Formation();
+    /*private Formation f = new Formation();
     private Formation f1 = new Formation();
 
     private void prepareListFormations() {
@@ -80,6 +80,6 @@ public class TabFragment1 extends Fragment {
         adapter.notifyDataSetChanged();
 
 
-    }
+    }*/
 
 }

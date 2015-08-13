@@ -40,9 +40,11 @@ public class Formation {
     protected boolean active;
     protected boolean free;
     protected double progress; // Pourcentage
+    protected String ean;
     protected List<Lesson> items = new ArrayList<Lesson>();
 
     public Formation(JSONObject data) {
+        Log.d("custom", data.toString());
         try {
             id              = data.getString("_id");
             title           = data.getString("title");
@@ -63,13 +65,12 @@ public class Formation {
             videoCount      = data.getString("video_count") != "null" ? Integer.parseInt(data.getString("video_count"), 10) : 0;
             active          = Boolean.parseBoolean(data.getString("active"));
             publishedDate   = data.getString("publishedDate");
+            ean             = data.getString("ean13");
 
             JSONObject ratingObj = new JSONObject(data.getString("rating"));
             rating = ratingObj.getString("average") != "null" ? Double.parseDouble(ratingObj.getString("average")) : 0;
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
-
-            Log.d("custom", this.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -251,5 +252,9 @@ public class Formation {
 
     public boolean isFree() {
         return free;
+    }
+
+    public String getEan() {
+        return ean;
     }
 }
