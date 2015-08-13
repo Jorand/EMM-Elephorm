@@ -13,6 +13,7 @@ public class Formation {
     protected int duration;
     protected String description;
     protected String teaser;
+    protected String images;
     protected double price;
     protected int video_count;
     protected String objectives;
@@ -110,6 +111,14 @@ public class Formation {
 
     public void setTeaser(String teaser) {
         this.teaser = teaser;
+    }
+
+    public String getImages() {
+        return images;
+    }
+
+    public void setImages(String images) {
+        this.images = images;
     }
 
     public double getPrice() {
