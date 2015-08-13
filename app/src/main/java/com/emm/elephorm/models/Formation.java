@@ -2,6 +2,13 @@ package com.emm.elephorm.models;
 
 import android.util.Log;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.emm.elephorm.app.ElephormApp;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,9 +47,11 @@ public class Formation {
     protected boolean active;
     protected boolean free;
     protected double progress; // Pourcentage
+    protected String ean;
     protected List<Lesson> items = new ArrayList<Lesson>();
 
     public Formation(JSONObject data) {
+        Log.d("custom", data.toString());
         try {
             id              = data.getString("_id");
             title           = data.getString("title");
@@ -63,19 +72,41 @@ public class Formation {
             videoCount      = data.getString("video_count") != "null" ? Integer.parseInt(data.getString("video_count"), 10) : 0;
             active          = Boolean.parseBoolean(data.getString("active"));
             publishedDate   = data.getString("publishedDate");
+            ean             = data.getString("ean13");
 
             JSONObject ratingObj = new JSONObject(data.getString("rating"));
             rating = ratingObj.getString("average") != "null" ? Double.parseDouble(ratingObj.getString("average")) : 0;
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
-
-            Log.d("custom", this.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    //define callback interface
+    public interface updateCallback {
+        void onUpdateFinished(Formation formation);
+    }
 
+    public static void getFormation(String ean, updateCallback cb) {
+        final updateCallback callback = cb;
+        JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
+            new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Formation formation = new Formation(response);
+                    callback.onUpdateFinished(formation);
+                }
+            },
+            new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            }
+        );
+        ElephormApp.getInstance().getRequestQueue().add(request);
+    }
 
     /**
      * Met à jour l'avancement dans la formation
@@ -253,5 +284,9 @@ public class Formation {
 
     public boolean isFree() {
         return free;
+    }
+
+    public String getEan() {
+        return ean;
     }
 }
