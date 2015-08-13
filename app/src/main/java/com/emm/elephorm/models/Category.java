@@ -89,6 +89,24 @@ public class Category {
         }
     }
 
+    public static Category getCategory(String id) {
+        Category category = null;
+        for(int i = 0;i<categories.size();i++) {
+            if(categories.get(i).getId() == id)
+                category = categories.get(i);
+        }
+        return category;
+    }
+
+    public Subcategory getSubcategory(String id) {
+        Subcategory subcategory = null;
+        for(int i = 0;i<subcategories.size();i++) {
+            if(subcategories.get(i).getId() == id)
+                subcategory = subcategories.get(i);
+        }
+        return subcategory;
+    }
+
     /** Getters **/
 
     public String getId() {
