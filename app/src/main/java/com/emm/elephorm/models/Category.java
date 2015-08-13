@@ -57,7 +57,7 @@ public class Category {
      */
     public static void getCategoryList(boolean update, updateCallback cb) {
         final updateCallback callback = cb;
-        if(update) {
+        if(update || categories.size() == 0) {
             categories.clear();
             JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
                     new Response.Listener<JSONArray>() {

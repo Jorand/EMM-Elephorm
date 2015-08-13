@@ -2,34 +2,100 @@ package com.emm.elephorm.models;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by Inikaam on 11/08/2015.
  */
 public class Formation {
+    protected String id;
     protected String title;
     protected String subtitle;
-    protected int duration;
+    protected String duration;
     protected String description;
+    protected String teaserText;
     protected String teaser;
-    protected double price;
-    protected int video_count;
+    protected String price;
+    protected int videoCount;
     protected String objectives;
     protected String prerequisites;
-    protected String product_url;
-    protected String qcm;
+    protected String productUrl;
+    protected String qcmUrl;
     protected String category;
     protected String subcategory;
-    protected int rating;
-    protected List<Lesson> children;
+    protected double rating;
+    protected String publishedDate;
+    protected String poster;
+    protected boolean active;
+    protected boolean free;
     protected double progress; // Pourcentage
+    protected List<Lesson> items = new ArrayList<Lesson>();
+
+    public Formation(JSONObject data) {
+        try {
+            id              = data.getString("_id");
+            title           = data.getString("title");
+            subtitle        = data.getString("subtitle");
+            productUrl      = data.getString("product_url");
+            price           = data.getString("price") != "null" ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
+            description     = data.getString("description");
+            duration        = data.getString("duration") != "null" ? formatDuration(Integer.parseInt(data.getString("duration"), 10)) : "00:00:00";
+            objectives      = data.getString("objectives");
+            prerequisites   = data.getString("prerequisites");
+            qcmUrl          = data.getString("qcm");
+            teaserText      = data.getString("teaser_text");
+            category        = data.getString("category");
+            subcategory     = data.getString("subcategory");
+            teaser          = data.getString("teaser");
+            poster          = data.getString("poster");
+            free            = Boolean.parseBoolean(data.getString("free"));
+            videoCount      = data.getString("video_count") != "null" ? Integer.parseInt(data.getString("video_count"), 10) : 0;
+            active          = Boolean.parseBoolean(data.getString("active"));
+            publishedDate   = data.getString("publishedDate");
+
+            JSONObject ratingObj = new JSONObject(data.getString("rating"));
+            rating = ratingObj.getString("average") != "null" ? Double.parseDouble(ratingObj.getString("average")) : 0;
+
+            progress = 0; // TODO : Aller chercher le progrès dans l'historique
+
+            Log.d("custom", this.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
 
+    }
+
+    /**
+     * Renvoie la publishedDate au format dd/mm/yyyy
+     * @return
+     */
+    protected String getPublishedDateFormated() {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
+        Date dateObj = null;
+        try {
+            dateObj = formatter.parse(publishedDate);
+            String[] parts = formatter.format(dateObj).split("-");
+            return parts[2] + "/" + parts[1] + "/" + parts[0];
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -42,17 +108,31 @@ public class Formation {
     }
 
     /**
+     * Arrondit le nombre
+     * @param number : nombre à arrondir
+     * @param decimals : nombre de décimales désirées
+     * @return nombre arrondit
+     */
+    protected double round(double number, int decimals) {
+        if (decimals < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = new BigDecimal(number);
+        bd = bd.setScale(decimals, RoundingMode.HALF_UP);
+        return bd.doubleValue();
+    }
+
+    /**
      * Convertit la durée au format HH:mm:ss
      * @return durée convertie
      */
-    public String formatDuration() {
+    protected String formatDuration(int duration) {
         int h = duration / 3600;
         int m = (duration % 3600) / 60;
         int s = (duration % 3600) % 60;
 
         return timeItemToString(h) + ":"
-                + timeItemToString(m) + ":"
-                + timeItemToString(s);
+                    + timeItemToString(m) + ":"
+                    + timeItemToString(s);
     }
 
     /**
@@ -72,131 +152,91 @@ public class Formation {
 
     /** Getters & setters **/
 
-    public String getTitle() {
-        return title;
+    public String getId() {
+        return id;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public String getTitle() {
+        return title;
     }
 
     public String getSubtitle() {
         return subtitle;
     }
 
-    public void setSubtitle(String subtitle) {
-        this.subtitle = subtitle;
-    }
-
-    public int getDuration() {
+    public String getDuration() {
         return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getTeaserText() {
+        return teaserText;
     }
 
     public String getTeaser() {
         return teaser;
     }
 
-    public void setTeaser(String teaser) {
-        this.teaser = teaser;
-    }
-
-    public double getPrice() {
+    public String getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public int getVideo_count() {
-        return video_count;
-    }
-
-    public void setVideo_count(int video_count) {
-        this.video_count = video_count;
+    public int getVideoCount() {
+        return videoCount;
     }
 
     public String getObjectives() {
         return objectives;
     }
 
-    public void setObjectives(String objectives) {
-        this.objectives = objectives;
-    }
-
     public String getPrerequisites() {
         return prerequisites;
     }
 
-    public void setPrerequisites(String prerequisites) {
-        this.prerequisites = prerequisites;
+    public String getProductUrl() {
+        return productUrl;
     }
 
-    public String getProduct_url() {
-        return product_url;
-    }
-
-    public void setProduct_url(String product_url) {
-        this.product_url = product_url;
-    }
-
-    public String getQcm() {
-        return qcm;
-    }
-
-    public void setQcm(String qcm) {
-        this.qcm = qcm;
+    public String getQcmUrl() {
+        return qcmUrl;
     }
 
     public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public String getSubcategory() {
         return subcategory;
     }
 
-    public void setSubcategory(String subcategory) {
-        this.subcategory = subcategory;
-    }
-
-    public int getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
-        this.rating = rating;
+    public List<Lesson> getItems() {
+        return items;
     }
 
-    public List<Lesson> getChildren() {
-        return children;
+    public String getPublishedDate() {
+        return publishedDate;
     }
 
-    public void setChildren(List<Lesson> children) {
-        this.children = children;
+    public String getPoster() {
+        return poster;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public double getProgress() {
         return progress;
     }
 
-    public void setProgress(double progress) {
-        this.progress = progress;
+    public boolean isFree() {
+        return free;
     }
 }
