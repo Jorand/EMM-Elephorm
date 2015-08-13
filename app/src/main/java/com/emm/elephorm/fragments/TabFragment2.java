@@ -13,6 +13,7 @@ import android.widget.ExpandableListView;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
 import com.emm.elephorm.models.Category;
+import com.emm.elephorm.models.Formation;
 import com.emm.elephorm.models.Subcategory;
 
 import java.util.ArrayList;
@@ -112,6 +113,13 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 // stopping swipe refresh
                 swipeRefreshLayout.setRefreshing(false);
+
+                categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
+                    @Override
+                    public void onUpdateFinished(List<Formation> formations) {
+                        Log.d("custom", "charge");
+                    }
+                });
             }
         });
 

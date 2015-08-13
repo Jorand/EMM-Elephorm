@@ -1,7 +1,16 @@
 package com.emm.elephorm.models;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.emm.elephorm.app.ElephormApp;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Inikaam on 12/08/2015.
@@ -11,6 +20,7 @@ public class Subcategory {
     protected String title;
     protected String description;
     protected boolean active;
+    protected List<Formation> formations = new ArrayList<Formation>();
 
     /**
      * Initialise la sous-catégorie avec un objet JSON
@@ -28,6 +38,50 @@ public class Subcategory {
 
     }
 
+    //define callback interface
+    public interface updateCallback {
+        void onUpdateFinished(List<Formation> formations);
+    }
+
+    /**
+     * Renvoie le tableau des formations de la sous-catégorie
+     * @param update : true s'il faut mettre les données des formations à jour, false sinon
+     * @return
+     */
+    public void getFormationList(boolean update, updateCallback cb) {
+        final updateCallback callback = cb;
+        if(update || formations.size() == 0) {
+            formations.clear();
+            JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            formations.clear();
+                            JSONObject obj = null;
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    obj = response.getJSONObject(i);
+                                    formations.add(new Formation(obj));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            callback.onUpdateFinished(formations);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+
+                        }
+                    }
+            );
+            ElephormApp.getInstance().getRequestQueue().add(request);
+        } else {
+            callback.onUpdateFinished(formations);
+        }
+    }
+    
     /** Getters **/
 
     public String getId() {
@@ -45,4 +99,5 @@ public class Subcategory {
     public boolean isActive() {
         return active;
     }
+    
 }
