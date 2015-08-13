@@ -58,30 +58,29 @@ public class Category {
     public static void getCategoryList(boolean update, updateCallback cb) {
         final updateCallback callback = cb;
         if(update || categories.size() == 0) {
-            categories.clear();
             JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
-                    new Response.Listener<JSONArray>() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            categories.clear();
-                            JSONObject obj = null;
-                            for (int i = 0; i < response.length(); i++) {
-                                try {
-                                    obj = response.getJSONObject(i);
-                                    categories.add(new Category(obj));
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        categories.clear();
+                        JSONObject obj = null;
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                obj = response.getJSONObject(i);
+                                categories.add(new Category(obj));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                            callback.onUpdateFinished(categories);
                         }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-
-                        }
+                        callback.onUpdateFinished(categories);
                     }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
             );
             ElephormApp.getInstance().getRequestQueue().add(request);
         } else {

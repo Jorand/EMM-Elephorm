@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,6 +55,13 @@ public class TabFragment1 extends Fragment {
         listView2.setAdapter(adapter);
 
         /*prepareListFormations();*/
+
+        Formation.getFormation("E3760141112624", new Formation.updateCallback() {
+            @Override
+            public void onUpdateFinished(Formation formation) {
+                Log.d("custom2", formation.getTitle());
+            }
+        });
 
         return v;
     }
