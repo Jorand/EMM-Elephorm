@@ -42,15 +42,20 @@ public class FormationsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         SubcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
+        String SubcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
 
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-            actionBar.setTitle(SubcategoryId);
+            actionBar.setTitle(SubcategoryTitle);
         }
 
         listView = (ListView) findViewById(R.id.formations_list);
+
+        View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
+
+        //listView.addHeaderView(headerView);
 
         listAdapter = new CustomListAdapter(this, formationList);
         listView.setAdapter(listAdapter);
@@ -78,19 +83,36 @@ public class FormationsActivity extends AppCompatActivity {
             return true;
         }
 
-        if (id == R.id.home) {
-            onBackPressed();
-            return true;
-        }
+       // if (id == R.id.home) {
+        //    onBackPressed();
+         //   return true;
+       // }
 
         return super.onOptionsItemSelected(item);
     }
 
-    protected List<Category> categories = new ArrayList<>();
-
     private void getListFormations() {
 
-        // TODO get formations
+        Formation.getSubcategoryFormations(SubcategoryId, new Formation.getFormationListCallback() {
+            @Override
+            public void onGetFinished(List<Formation> formations) {
+
+                for (int i = 0; i < formations.size(); i++) {
+
+                    Formation obj = formations.get(i);
+
+                    formationList.add(obj);
+
+                    listAdapter.notifyDataSetChanged();
+                }
+
+            }
+
+            @Override
+            public void onGetFail(String error) {
+
+            }
+        });
 
     }
 }

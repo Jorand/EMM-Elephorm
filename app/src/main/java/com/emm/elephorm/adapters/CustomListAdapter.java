@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +65,7 @@ public class CustomListAdapter extends BaseAdapter {
         Formation f = formationItems.get(position);
 
         // thumbnail image
-        thumbNail.setImageUrl(f.getImages(), imageLoader);
+        thumbNail.setImageUrl(f.getPoster(), imageLoader);
 
         // title
         title.setText(f.getTitle());
@@ -73,7 +74,7 @@ public class CustomListAdapter extends BaseAdapter {
         desc.setText(f.getSubtitle());
 
         // category
-        cat.setText(f.getDescription());
+        cat.setText(Html.fromHtml(f.getDescription()));
 
         return convertView;
     }

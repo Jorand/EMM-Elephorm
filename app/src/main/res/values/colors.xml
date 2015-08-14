@@ -6,4 +6,6 @@
     <color name="ColorTxt">#212121</color>
     <color name="ColorTitle">#1c1c1c</color>
     <color name="ColorGey">#9a9a9a</color>
+
+    <color name="ImgGey">#eeeeee</color>
 </resources>

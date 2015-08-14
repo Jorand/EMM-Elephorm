@@ -24,7 +24,9 @@
         android:id="@+id/formations_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
-        android:background="#000000"/>
+        android:layout_below="@+id/Ftoolbar"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:divider="#00000000"/>
 
 </RelativeLayout>

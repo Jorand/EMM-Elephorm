@@ -71,6 +71,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 Intent intent = new Intent(getActivity(), FormationsActivity.class);
                 intent.putExtra("EXTRA_SUBCATEGORY_ID", subcategoryId);
+                intent.putExtra("EXTRA_SUBCATEGORY_NAME", obj.getTitle());
                 startActivity(intent);
 
                 return false;
