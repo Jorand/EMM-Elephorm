@@ -22,11 +22,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FormationsActivity"
-            android:label="@string/title_activity_formations" >
+            android:name=".FormationsListActivity"
+            android:label="@string/title_activity_formations"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity
+            android:name=".FormationActivity"
+            android:label="@string/title_activity_formation" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FormationsListActivity" />
         </activity>
     </application>
 

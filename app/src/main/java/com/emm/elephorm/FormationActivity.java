@@ -1,73 +1,55 @@
 package com.emm.elephorm;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.emm.elephorm.adapters.CustomListAdapter;
-import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
-import com.emm.elephorm.models.Subcategory;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class FormationActivity extends AppCompatActivity {
 
-public class FormationsActivity extends AppCompatActivity {
+    private String FormationId;
 
-    private ListView listView;
-    private CustomListAdapter listAdapter;
-    private String SubcategoryId;
-
-    private List<Formation> formationList = new ArrayList<>();
+    private Formation myFormation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_formations);
+        setContentView(R.layout.activity_formation);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.Ftoolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
 
         Intent intent = getIntent();
-        SubcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
-        String SubcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
+        FormationId = intent.getStringExtra("EXTRA_FORMATION_ID");
 
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-            actionBar.setTitle(SubcategoryTitle);
+            actionBar.setTitle("Formation");
         }
 
-        listView = (ListView) findViewById(R.id.formations_list);
-
-        View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
-
-        //listView.addHeaderView(headerView);
-
-        listAdapter = new CustomListAdapter(this, formationList);
-        listView.setAdapter(listAdapter);
-
-        getListFormations();
-
+        getFormation();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_formations, menu);
+        getMenuInflater().inflate(R.menu.menu_formation, menu);
         return true;
     }
 
@@ -83,28 +65,29 @@ public class FormationsActivity extends AppCompatActivity {
             return true;
         }
 
-       // if (id == R.id.home) {
+        //if (id == R.id.home) {
         //    onBackPressed();
-         //   return true;
-       // }
+        //    return true;
+        //}
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void getListFormations() {
+    private void getFormation() {
 
-        Formation.getSubcategoryFormations(SubcategoryId, new Formation.getFormationListCallback() {
+        Formation.getFormation(FormationId, new Formation.getFormationCallback() {
             @Override
-            public void onGetFinished(List<Formation> formations) {
+            public void onGetFinished(Formation formation) {
 
-                for (int i = 0; i < formations.size(); i++) {
+                myFormation = formation;
 
-                    Formation obj = formations.get(i);
+                TextView title = (TextView) findViewById(R.id.TitleFormation);
 
-                    formationList.add(obj);
+                Log.d("TAG", formation.getTitle());
 
-                    listAdapter.notifyDataSetChanged();
-                }
+                title.setText(formation.getTitle());
+
+                //formationAdapter.notifyDataSetChanged();
 
             }
 

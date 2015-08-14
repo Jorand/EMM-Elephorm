@@ -5,14 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 
-import com.emm.elephorm.FormationsActivity;
+import com.emm.elephorm.FormationsListActivity;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
 import com.emm.elephorm.models.Category;
@@ -20,7 +18,6 @@ import com.emm.elephorm.models.Formation;
 import com.emm.elephorm.models.Subcategory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -69,7 +66,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
                 Subcategory obj = listCategories.get(groupPosition).getSubcategories().get(childPosition);
                 String subcategoryId = obj.getId();
 
-                Intent intent = new Intent(getActivity(), FormationsActivity.class);
+                Intent intent = new Intent(getActivity(), FormationsListActivity.class);
                 intent.putExtra("EXTRA_SUBCATEGORY_ID", subcategoryId);
                 intent.putExtra("EXTRA_SUBCATEGORY_NAME", obj.getTitle());
                 startActivity(intent);
