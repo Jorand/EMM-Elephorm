@@ -30,7 +30,7 @@ import java.util.List;
 public class TabFragment1 extends Fragment {
     private View v;
     private List<Formation> formationList = new ArrayList<>();
-    private ListView listView1;
+    private ListView listView;
     private CustomListAdapter adapter;
 
     @Override
@@ -38,24 +38,18 @@ public class TabFragment1 extends Fragment {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_tab_fragment1, container, false);
 
-        listView1 = (ListView) v.findViewById(R.id.home_list_1);
+        //listView = (ListView) v.findViewById(R.id.expandableHomeList);
 
         // Header View
-        View headerView = inflater.inflate(R.layout.home_list_header, null, false);
-        listView1.addHeaderView(headerView);
+        //View headerView = inflater.inflate(R.layout.list_header, null, false);
+        //listView1.addHeaderView(headerView);
 
-        adapter = new CustomListAdapter((Activity) v.getContext(), formationList);
-        listView1.setAdapter(adapter);
+        //adapter = new CustomListAdapter((Activity) v.getContext(), formationList);
+        //listView.setAdapter(adapter);
 
-        ListView listView2 = (ListView) v.findViewById(R.id.home_list_2);
+        //prepareListFormations();
 
-        listView2.addHeaderView(headerView);
-
-        adapter = new CustomListAdapter((Activity) v.getContext(), formationList);
-        listView2.setAdapter(adapter);
-
-        /*prepareListFormations();*/
-
+        // Exemple
         Formation.getFormation("E3760141112624", new Formation.updateCallback() {
             @Override
             public void onUpdateFinished(Formation formation) {
@@ -68,28 +62,36 @@ public class TabFragment1 extends Fragment {
 
 
     protected List<Category> categories = new ArrayList<>();
-    protected List<Subcategory> subcategory = new ArrayList<>();
 
     private void prepareListFormations() {
 
-        /*
-
-        categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
+        Category.getCategoryList(true, new Category.updateCallback() {
             @Override
-            public void onUpdateFinished(List<Formation> formations) {
+            public void onUpdateFinished(List<Category> cats) {
+            categories = cats;
+            for (int i = 0; i < categories.size(); i++) {
 
-                for (int i = 0; i < formations.size(); i++) {
+                Category obj = categories.get(i);
+            }
 
-                    Formation obj = formations.get(i);
+            categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
+                @Override
+                public void onUpdateFinished(List<Formation> formations) {
 
-                    formationList.add(obj);
+                    for (int i = 0; i < formations.size(); i++) {
 
-                    adapter.notifyDataSetChanged();
+                        Formation obj = formations.get(i);
+
+                        formationList.add(obj);
+
+                        adapter.notifyDataSetChanged();
+                    }
                 }
+            });
+
+            adapter.notifyDataSetChanged();
             }
         });
-        */
-
 
     }
 

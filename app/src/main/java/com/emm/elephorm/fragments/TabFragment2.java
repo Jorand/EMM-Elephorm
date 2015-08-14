@@ -1,6 +1,7 @@
 package com.emm.elephorm.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.ListView;
 
+import com.emm.elephorm.FormationsActivity;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.ExpandableListAdapter;
 import com.emm.elephorm.models.Category;
@@ -63,11 +65,14 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                Log.i(TAG, "item " + childPosition + " of group " + groupPosition + " clicked." + id);
 
                 Subcategory obj = listCategories.get(groupPosition).getSubcategories().get(childPosition);
+                String subcategoryId = obj.getId();
 
-                Log.d(TAG, String.valueOf(obj));
+                Intent intent = new Intent(getActivity(), FormationsActivity.class);
+                intent.putExtra("EXTRA_SUBCATEGORY_ID", subcategoryId);
+                startActivity(intent);
+
                 return false;
             }
         });
@@ -85,7 +90,6 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
      */
 
     protected List<Category> categories = new ArrayList<>();
-    protected List<Subcategory> subcategory = new ArrayList<>();
 
     private void prepareListCategory() {
 
@@ -101,7 +105,6 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                     Category obj = categories.get(i);
                     listCategories.add(obj);
-
                 }
 
                 listAdapter.notifyDataSetChanged();
@@ -109,10 +112,11 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
                 // stopping swipe refresh
                 swipeRefreshLayout.setRefreshing(false);
 
+                // Exemple
                 categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
                     @Override
                     public void onUpdateFinished(List<Formation> formations) {
-                        Log.d("custom", "charge");
+                        //Log.d("custom", "charge");
                     }
                 });
             }
