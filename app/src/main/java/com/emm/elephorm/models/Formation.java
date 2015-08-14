@@ -57,9 +57,9 @@ public class Formation {
             title           = data.getString("title");
             subtitle        = data.getString("subtitle");
             productUrl      = data.getString("product_url");
-            price           = data.getString("price") != "null" ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
+            price           = !data.getString("price").equals("null") ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
             description     = data.getString("description");
-            duration        = data.getString("duration") != "null" ? formatDuration(Integer.parseInt(data.getString("duration"), 10)) : "00:00:00";
+            duration        = !data.getString("duration").equals("null") ? formatDuration(Integer.parseInt(data.getString("duration"), 10)) : "00:00:00";
             objectives      = data.getString("objectives");
             prerequisites   = data.getString("prerequisites");
             qcmUrl          = data.getString("qcm");
@@ -69,13 +69,13 @@ public class Formation {
             teaser          = data.getString("teaser");
             poster          = data.getString("poster");
             free            = Boolean.parseBoolean(data.getString("free"));
-            videoCount      = data.getString("video_count") != "null" ? Integer.parseInt(data.getString("video_count"), 10) : 0;
+            videoCount      = !(data.getString("video_count").equals("null")) ? Integer.parseInt(data.getString("video_count"), 10) : 0;
             active          = Boolean.parseBoolean(data.getString("active"));
             publishedDate   = data.getString("publishedDate");
             ean             = data.getString("ean13");
 
             JSONObject ratingObj = new JSONObject(data.getString("rating"));
-            rating = ratingObj.getString("average") != "null" ? Double.parseDouble(ratingObj.getString("average")) : 0;
+            rating = !ratingObj.getString("average").equals("null") ? Double.parseDouble(ratingObj.getString("average")) : 0;
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
         } catch (JSONException e) {
@@ -84,18 +84,22 @@ public class Formation {
     }
 
     //define callback interface
-    public interface updateCallback {
-        void onUpdateFinished(Formation formation);
+    public interface getFormationCallback {
+        void onGetFinished(Formation formation);
     }
 
-    public static void getFormation(String ean, updateCallback cb) {
-        final updateCallback callback = cb;
+    /**
+     * Renvoie un formation à partir de son code ean
+     * @param ean : code ean de la formation
+     */
+    public static void getFormation(String ean, getFormationCallback cb) {
+        final getFormationCallback callback = cb;
         JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
             new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     Formation formation = new Formation(response);
-                    callback.onUpdateFinished(formation);
+                    callback.onGetFinished(formation);
                 }
             },
             new Response.ErrorListener() {
@@ -104,6 +108,44 @@ public class Formation {
 
                 }
             }
+        );
+        ElephormApp.getInstance().getRequestQueue().add(request);
+    }
+
+    //define callback interface
+    public interface getFormationListCallback {
+        void onGetFinished(List<Formation> formations);
+    }
+
+    /**
+     * Renvoie le tableau des formations de la sous-catégorie indiquée
+     * @param id : id de la sous-catégorie
+     */
+    public static void getSubcategoryFormations(String id, getFormationListCallback cb) {
+        final getFormationListCallback callback = cb;
+        JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        JSONObject obj = null;
+                        List<Formation> formations = new ArrayList<Formation>();
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                obj = response.getJSONObject(i);
+                                formations.add(new Formation(obj));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        callback.onGetFinished(formations);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }
         );
         ElephormApp.getInstance().getRequestQueue().add(request);
     }
@@ -137,8 +179,7 @@ public class Formation {
      * @return valeur d'une leçon
      */
     protected double lessonPercentValue() {
-        double percent = 0;
-        return percent;
+        return (double) 0;
     }
 
     /**

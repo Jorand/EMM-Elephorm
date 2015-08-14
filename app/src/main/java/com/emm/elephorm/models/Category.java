@@ -53,7 +53,6 @@ public class Category {
     /**
      * Renvoie le tableau des catégories et sous-catégories actuel
      * @param update : true s'il faut mettre les données des catégories à jour, false sinon
-     * @return
      */
     public static void getCategoryList(boolean update, updateCallback cb) {
         final updateCallback callback = cb;
@@ -78,7 +77,7 @@ public class Category {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        // TODO : gérer les erreurs
                     }
                 }
             );
@@ -91,7 +90,7 @@ public class Category {
     public static Category getCategory(String id) {
         Category category = null;
         for(int i = 0;i<categories.size();i++) {
-            if(categories.get(i).getId() == id)
+            if(categories.get(i).getId().equals(id))
                 category = categories.get(i);
         }
         return category;
@@ -100,7 +99,7 @@ public class Category {
     public Subcategory getSubcategory(String id) {
         Subcategory subcategory = null;
         for(int i = 0;i<subcategories.size();i++) {
-            if(subcategories.get(i).getId() == id)
+            if(subcategories.get(i).getId().equals(id))
                 subcategory = subcategories.get(i);
         }
         return subcategory;

@@ -3,7 +3,6 @@ package com.emm.elephorm.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,13 +12,7 @@ import android.widget.ListView;
 
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.CustomListAdapter;
-import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
-import com.emm.elephorm.models.Subcategory;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +49,9 @@ public class TabFragment1 extends Fragment {
 
         /*prepareListFormations();*/
 
-        Formation.getFormation("E3760141112624", new Formation.updateCallback() {
+        Formation.getFormation("E3760141112624", new Formation.getFormationCallback() {
             @Override
-            public void onUpdateFinished(Formation formation) {
+            public void onGetFinished(Formation formation) {
                 Log.d("custom2", formation.getTitle());
             }
         });
