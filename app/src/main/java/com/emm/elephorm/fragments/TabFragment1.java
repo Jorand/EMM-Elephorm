@@ -3,7 +3,6 @@ package com.emm.elephorm.fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,11 +14,6 @@ import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
-import com.emm.elephorm.models.Subcategory;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,14 +42,15 @@ public class TabFragment1 extends Fragment {
         //listView.setAdapter(adapter);
 
         //prepareListFormations();
+        /*
+        Formation.getFormation("E3760141112624", new Formation.getFormationCallback() {
 
-        // Exemple
-        Formation.getFormation("E3760141112624", new Formation.updateCallback() {
             @Override
-            public void onUpdateFinished(Formation formation) {
+            public void onGetFinished(Formation formation) {
                 Log.d("custom2", formation.getTitle());
             }
         });
+        */
 
         return v;
     }
@@ -63,7 +58,7 @@ public class TabFragment1 extends Fragment {
 
     protected List<Category> categories = new ArrayList<>();
 
-    private void prepareListFormations() {
+    /*private void prepareListFormations() {
 
         Category.getCategoryList(true, new Category.updateCallback() {
             @Override
@@ -93,6 +88,6 @@ public class TabFragment1 extends Fragment {
             }
         });
 
-    }
+    }*/
 
 }

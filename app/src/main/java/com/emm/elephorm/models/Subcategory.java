@@ -1,8 +1,13 @@
 package com.emm.elephorm.models;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 
 import org.json.JSONArray;
@@ -41,6 +46,7 @@ public class Subcategory {
     //define callback interface
     public interface updateCallback {
         void onUpdateFinished(List<Formation> formations);
+        void onUpdateFail(String error);
     }
 
     /**
@@ -50,7 +56,15 @@ public class Subcategory {
      */
     public void getFormationList(boolean update, updateCallback cb) {
         final updateCallback callback = cb;
-        if(update || formations.size() == 0) {
+
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else if(update || formations.size() == 0) {
             formations.clear();
             JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
                     new Response.Listener<JSONArray>() {
@@ -72,7 +86,8 @@ public class Subcategory {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-
+                            callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                            throw new Error(error.toString());
                         }
                     }
             );

@@ -6,7 +6,10 @@
     <string name="tab_title_1">Home</string>
     <string name="tab_title_2">Tous les cours</string>
     <string name="tab_title_3">Mes cours</string>
+
     <string name="title_activity_formations">FormationsActivity</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="global_connexion_error">Aucune connexion disponible.</string>
+    <string name="global_volley_error">Une erreur est survenue lors de la tentative de connexion avec le serveur. Veuillez réessayer plus tard.</string>
+
 </resources>
