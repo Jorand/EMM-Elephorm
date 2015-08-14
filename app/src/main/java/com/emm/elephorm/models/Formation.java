@@ -1,11 +1,15 @@
 package com.emm.elephorm.models;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 
 import org.json.JSONArray;
@@ -51,7 +55,6 @@ public class Formation {
     protected List<Lesson> items = new ArrayList<Lesson>();
 
     public Formation(JSONObject data) {
-        Log.d("custom", data.toString());
         try {
             id              = data.getString("_id");
             title           = data.getString("title");
@@ -86,6 +89,7 @@ public class Formation {
     //define callback interface
     public interface getFormationCallback {
         void onGetFinished(Formation formation);
+        void onGetFail(String error);
     }
 
     /**
@@ -94,27 +98,38 @@ public class Formation {
      */
     public static void getFormation(String ean, getFormationCallback cb) {
         final getFormationCallback callback = cb;
-        JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
-            new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    Formation formation = new Formation(response);
-                    callback.onGetFinished(formation);
-                }
-            },
-            new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else {
+            JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Formation formation = new Formation(response);
+                        callback.onGetFinished(formation);
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                        throw new Error(error.toString());
+                    }
                 }
-            }
-        );
-        ElephormApp.getInstance().getRequestQueue().add(request);
+            );
+            ElephormApp.getInstance().getRequestQueue().add(request);
+        }
     }
 
     //define callback interface
     public interface getFormationListCallback {
         void onGetFinished(List<Formation> formations);
+        void onGetFail(String error);
     }
 
     /**
@@ -123,7 +138,15 @@ public class Formation {
      */
     public static void getSubcategoryFormations(String id, getFormationListCallback cb) {
         final getFormationListCallback callback = cb;
-        JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -143,11 +166,13 @@ public class Formation {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-
+                        callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                        throw new Error(error.toString());
                     }
                 }
-        );
-        ElephormApp.getInstance().getRequestQueue().add(request);
+            );
+            ElephormApp.getInstance().getRequestQueue().add(request);
+        }
     }
 
     /**

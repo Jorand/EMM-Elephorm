@@ -1,10 +1,13 @@
 package com.emm.elephorm.models;
 
-import android.util.Log;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 
 import org.json.JSONArray;
@@ -48,6 +51,7 @@ public class Category {
     //define callback interface
     public interface updateCallback {
         void onUpdateFinished(List<Category> categories);
+        void onUpdateFail(String error);
     }
 
     /**
@@ -56,7 +60,15 @@ public class Category {
      */
     public static void getCategoryList(boolean update, updateCallback cb) {
         final updateCallback callback = cb;
-        if(update || categories.size() == 0) {
+
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else if(update || categories.size() == 0) {
             JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/categories",
                 new Response.Listener<JSONArray>() {
                     @Override
@@ -77,7 +89,8 @@ public class Category {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        // TODO : gérer les erreurs
+                        callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                        throw new Error(error.toString());
                     }
                 }
             );
