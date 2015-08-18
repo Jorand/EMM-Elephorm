@@ -83,7 +83,7 @@ public class FormationActivity extends AppCompatActivity {
 
                 TextView title = (TextView) findViewById(R.id.TitleFormation);
 
-                Log.d("TAG", formation.getTitle());
+               /* Log.d("TAG", formation.getTitle());*/
 
                 title.setText(formation.getTitle());
 

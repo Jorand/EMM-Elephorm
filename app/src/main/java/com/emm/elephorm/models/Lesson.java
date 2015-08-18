@@ -1,5 +1,14 @@
 package com.emm.elephorm.models;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Inikaam on 11/08/2015.
  */
@@ -10,11 +19,58 @@ public class Lesson {
     protected String video;
     protected int duration;
     protected String poster;
-    protected String vignette;
-    protected String file;
+    protected boolean free;
     protected boolean viewed;
+    protected List<Lesson> items = new ArrayList<Lesson>();
 
+    public Lesson(JSONObject data) {
+        try {
+            id = data.getString("_id");
+            type = data.getString("type");
+            title = data.getString("title");
+            free = Boolean.parseBoolean(data.getString("free"));
 
+            JSONArray fieldVideo = new JSONArray(data.getString("video"));
+
+            if(fieldVideo.length() > 0) {
+                video = fieldVideo.getString(0);
+            }
+
+            // Isolation des cas pour permettre au script de continuer malgré l'échec
+            try {
+                duration = Integer.parseInt(data.getString("duration"));
+            } catch (JSONException e) {
+                duration = 0;
+            }
+            try {
+                poster = data.getString("field_poster");
+            } catch (JSONException e) {
+                poster = null;
+            }
+            try {
+                JSONArray items = new JSONArray(data.getString("items"));
+
+                this.items = Lesson.getLessonList(items);
+            } catch (JSONException e) {
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<Lesson> getLessonList(JSONArray data) {
+        Log.d("custom", data.toString());
+        List<Lesson> lessons = new ArrayList<Lesson>();
+        for(int i = 0;i<data.length();i++) {
+            try {
+                lessons.add(new Lesson(data.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return lessons;
+    }
 
     /** Getters & setters **/
 
@@ -22,71 +78,35 @@ public class Lesson {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getVideo() {
         return video;
-    }
-
-    public void setVideo(String video) {
-        this.video = video;
     }
 
     public int getDuration() {
         return duration;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
     public String getPoster() {
         return poster;
-    }
-
-    public void setPoster(String poster) {
-        this.poster = poster;
-    }
-
-    public String getVignette() {
-        return vignette;
-    }
-
-    public void setVignette(String vignette) {
-        this.vignette = vignette;
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
     }
 
     public boolean isViewed() {
         return viewed;
     }
 
-    public void setViewed(boolean viewed) {
-        this.viewed = viewed;
+    public boolean isFree() {
+        return free;
+    }
+
+    public List<Lesson> getItems() {
+        return items;
     }
 }

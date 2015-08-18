@@ -80,6 +80,15 @@ public class Formation {
             JSONObject ratingObj = new JSONObject(data.getString("rating"));
             rating = !ratingObj.getString("average").equals("null") ? Double.parseDouble(ratingObj.getString("average")) : 0;
 
+            // Gestion des items
+            try {
+                JSONArray items = new JSONArray(data.getString("items"));
+
+                this.items = Lesson.getLessonList(items);
+            } catch (JSONException e) {
+
+            }
+
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
         } catch (JSONException e) {
             e.printStackTrace();
