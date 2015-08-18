@@ -62,7 +62,7 @@ public class Formation {
             productUrl      = data.getString("product_url");
             price           = !data.getString("price").equals("null") ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
             description     = data.getString("description");
-            duration        = !data.getString("duration").equals("null") ? formatDuration(Integer.parseInt(data.getString("duration"), 10)) : "00:00:00";
+            duration        = !data.getString("duration").equals("null") ? formatDuration((int) Double.parseDouble(data.getString("duration"))) : "00:00:00";
             objectives      = data.getString("objectives");
             prerequisites   = data.getString("prerequisites");
             qcmUrl          = data.getString("qcm");
@@ -81,13 +81,12 @@ public class Formation {
             rating = !ratingObj.getString("average").equals("null") ? Double.parseDouble(ratingObj.getString("average")) : 0;
 
             // Gestion des items
-            try {
+            if(data.has("items")) {
                 JSONArray items = new JSONArray(data.getString("items"));
 
                 this.items = Lesson.getLessonList(items);
-            } catch (JSONException e) {
-
             }
+
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
         } catch (JSONException e) {
@@ -121,13 +120,14 @@ public class Formation {
                     public void onResponse(JSONObject response) {
                         Formation formation = new Formation(response);
                         callback.onGetFinished(formation);
+                        Log.d("compte", String.valueOf(Lesson.count));
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
-                        throw new Error(error.toString());
+
                     }
                 }
             );
@@ -176,7 +176,7 @@ public class Formation {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
-                        throw new Error(error.toString());
+
                     }
                 }
             );

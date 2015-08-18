@@ -17,11 +17,12 @@ public class Lesson {
     protected String type;
     protected String title;
     protected String video;
-    protected int duration;
+    protected String duration;
     protected String poster;
     protected boolean free;
     protected boolean viewed;
     protected List<Lesson> items = new ArrayList<Lesson>();
+    public static int count = 0;
 
     public Lesson(JSONObject data) {
         try {
@@ -29,38 +30,60 @@ public class Lesson {
             type = data.getString("type");
             title = data.getString("title");
             free = Boolean.parseBoolean(data.getString("free"));
-
-            JSONArray fieldVideo = new JSONArray(data.getString("video"));
-
-            if(fieldVideo.length() > 0) {
-                video = fieldVideo.getString(0);
-            }
-
-            // Isolation des cas pour permettre au script de continuer malgré l'échec
-            try {
-                duration = Integer.parseInt(data.getString("duration"));
-            } catch (JSONException e) {
-                duration = 0;
-            }
-            try {
+            if(data.has("duration"))
+                duration = formatDuration((int) Double.parseDouble(data.getString("duration")));
+            if(data.has("field_poster"))
                 poster = data.getString("field_poster");
-            } catch (JSONException e) {
-                poster = null;
-            }
-            try {
+            if(data.has("items")) {
                 JSONArray items = new JSONArray(data.getString("items"));
 
                 this.items = Lesson.getLessonList(items);
-            } catch (JSONException e) {
-
             }
+
+            JSONArray fieldVideo = new JSONArray(data.getString("field_video"));
+            if(fieldVideo.length() > 0) {
+                video = fieldVideo.getString(0);
+            }
+            Log.d("custom", title);
+            count++;
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Convertit la durée au format HH:mm:ss
+     * @return durée convertie
+     */
+    protected String formatDuration(int duration) {
+        int h = duration / 3600;
+        int m = (duration % 3600) / 60;
+        int s = (duration % 3600) % 60;
+
+        return timeItemToString(h) + ":"
+                + timeItemToString(m) + ":"
+                + timeItemToString(s);
+    }
+
+    /**
+     * Renvoie la valeur au format 2 chiffres mini
+     * @param timeItem : valeur (heure, minute ou seconde)
+     * @return valeur à 2 chiffres
+     */
+    protected String timeItemToString(int timeItem) {
+        String stringItem;
+        if(timeItem < 10 )
+            stringItem = "0" + timeItem;
+        else
+            stringItem = "" + timeItem;
+
+        return stringItem;
+    }
+
+    /** STATICS **/
+
     public static List<Lesson> getLessonList(JSONArray data) {
-        Log.d("custom", data.toString());
         List<Lesson> lessons = new ArrayList<Lesson>();
         for(int i = 0;i<data.length();i++) {
             try {
@@ -90,7 +113,7 @@ public class Lesson {
         return video;
     }
 
-    public int getDuration() {
+    public String getDuration() {
         return duration;
     }
 

@@ -95,7 +95,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
         swipeRefreshLayout.setRefreshing(true);
 
-        Category.getCategoryList(true, new Category.updateCallback() {
+        /*Category.getCategoryList(true, new Category.updateCallback() {
             @Override
             public void onUpdateFinished(List<Category> cats) {
                 categories = cats;
@@ -130,7 +130,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
             public void onUpdateFail(String error) {
 
             }
-        });
+        });*/
 
     }
 
