@@ -111,21 +111,6 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                 // stopping swipe refresh
                 swipeRefreshLayout.setRefreshing(false);
-
-                // Exemple
-                categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
-                    @Override
-                    public void onUpdateFinished(List<Formation> formations) {
-
-                        //Log.d("custom", "charge");
-
-                    }
-
-                    @Override
-                    public void onUpdateFail(String error) {
-
-                    }
-                });
             }
 
             @Override

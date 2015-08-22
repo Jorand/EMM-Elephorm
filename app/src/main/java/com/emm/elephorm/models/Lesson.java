@@ -1,5 +1,14 @@
 package com.emm.elephorm.models;
 
+import android.util.Log;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Inikaam on 11/08/2015.
  */
@@ -8,13 +17,83 @@ public class Lesson {
     protected String type;
     protected String title;
     protected String video;
-    protected int duration;
+    protected String duration;
     protected String poster;
-    protected String vignette;
-    protected String file;
+    protected boolean free;
     protected boolean viewed;
+    protected List<Lesson> items = new ArrayList<Lesson>();
+    public static int count = 0;
 
+    public Lesson(JSONObject data) {
+        try {
+            id = data.getString("_id");
+            type = data.getString("type");
+            title = data.getString("title");
+            free = Boolean.parseBoolean(data.getString("free"));
+            if(data.has("duration"))
+                duration = formatDuration((int) Double.parseDouble(data.getString("duration")));
+            if(data.has("field_poster"))
+                poster = data.getString("field_poster");
+            if(data.has("items")) {
+                JSONArray items = new JSONArray(data.getString("items"));
 
+                this.items = Lesson.getLessonList(items);
+            }
+
+            JSONArray fieldVideo = new JSONArray(data.getString("field_video"));
+            if(fieldVideo.length() > 0) {
+                video = fieldVideo.getString(0);
+            }
+            Log.d("custom", title);
+            count++;
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Convertit la durée au format HH:mm:ss
+     * @return durée convertie
+     */
+    protected String formatDuration(int duration) {
+        int h = duration / 3600;
+        int m = (duration % 3600) / 60;
+        int s = (duration % 3600) % 60;
+
+        return timeItemToString(h) + ":"
+                + timeItemToString(m) + ":"
+                + timeItemToString(s);
+    }
+
+    /**
+     * Renvoie la valeur au format 2 chiffres mini
+     * @param timeItem : valeur (heure, minute ou seconde)
+     * @return valeur à 2 chiffres
+     */
+    protected String timeItemToString(int timeItem) {
+        String stringItem;
+        if(timeItem < 10 )
+            stringItem = "0" + timeItem;
+        else
+            stringItem = "" + timeItem;
+
+        return stringItem;
+    }
+
+    /** STATICS **/
+
+    public static List<Lesson> getLessonList(JSONArray data) {
+        List<Lesson> lessons = new ArrayList<Lesson>();
+        for(int i = 0;i<data.length();i++) {
+            try {
+                lessons.add(new Lesson(data.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return lessons;
+    }
 
     /** Getters & setters **/
 
@@ -22,71 +101,35 @@ public class Lesson {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public String getVideo() {
         return video;
     }
 
-    public void setVideo(String video) {
-        this.video = video;
-    }
-
-    public int getDuration() {
+    public String getDuration() {
         return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
     public String getPoster() {
         return poster;
     }
 
-    public void setPoster(String poster) {
-        this.poster = poster;
-    }
-
-    public String getVignette() {
-        return vignette;
-    }
-
-    public void setVignette(String vignette) {
-        this.vignette = vignette;
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        this.file = file;
-    }
-
     public boolean isViewed() {
         return viewed;
     }
 
-    public void setViewed(boolean viewed) {
-        this.viewed = viewed;
+    public boolean isFree() {
+        return free;
+    }
+
+    public List<Lesson> getItems() {
+        return items;
     }
 }
