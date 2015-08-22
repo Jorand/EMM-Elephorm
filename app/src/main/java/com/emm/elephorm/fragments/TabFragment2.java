@@ -49,6 +49,8 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
         swipeRefreshLayout.setOnRefreshListener(this);
 
+        //swipeRefreshLayout.setEnabled(false);
+
         swipeRefreshLayout.post(new Runnable() {
                 @Override
                 public void run() {

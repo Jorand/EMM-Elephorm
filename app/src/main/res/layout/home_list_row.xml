@@ -47,7 +47,7 @@
         android:ellipsize="end"
         android:maxLines="1"/>
 
-    <!-- Categories -->
+    <!-- Categories
     <TextView
         android:id="@+id/cat"
         android:layout_width="fill_parent"
@@ -60,5 +60,6 @@
         android:textSize="@dimen/rowCategory"
         android:ellipsize="end"
         android:maxLines="1"/>
+    -->
 
 </RelativeLayout>

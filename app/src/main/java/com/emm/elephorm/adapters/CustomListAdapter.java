@@ -59,7 +59,7 @@ public class CustomListAdapter extends BaseAdapter {
                 .findViewById(R.id.thumbnail);
         TextView title = (TextView) convertView.findViewById(R.id.title);
         TextView desc = (TextView) convertView.findViewById(R.id.desc);
-        TextView cat = (TextView) convertView.findViewById(R.id.cat);
+        //TextView cat = (TextView) convertView.findViewById(R.id.cat);
 
         // getting movie data for the row
         Formation f = formationItems.get(position);
@@ -71,10 +71,11 @@ public class CustomListAdapter extends BaseAdapter {
         title.setText(f.getTitle());
 
         // Desc
-        desc.setText(f.getSubtitle());
+        //desc.setText(Html.fromHtml(f.getTeaserText())); // HTML
+        desc.setText(f.getPublishedDate());
 
         // category
-        cat.setText(Html.fromHtml(f.getDescription()));
+        //cat.setText(f.getPublishedDate());
 
         return convertView;
     }
