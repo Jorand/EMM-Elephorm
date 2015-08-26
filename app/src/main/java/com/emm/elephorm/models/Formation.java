@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -56,7 +57,6 @@ public class Formation {
 
     public Formation(JSONObject data) {
         try {
-            id              = data.getString("_id");
             title           = data.getString("title");
             subtitle        = data.getString("subtitle");
             productUrl      = data.getString("product_url");
@@ -89,9 +89,16 @@ public class Formation {
 
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
+
+            Log.d("custom", ean);
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     //define callback interface
@@ -120,7 +127,6 @@ public class Formation {
                     public void onResponse(JSONObject response) {
                         Formation formation = new Formation(response);
                         callback.onGetFinished(formation);
-                        Log.d("compte", String.valueOf(Lesson.count));
                     }
                 },
                 new Response.ErrorListener() {

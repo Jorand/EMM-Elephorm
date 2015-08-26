@@ -90,7 +90,6 @@ public class Category {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
-                        throw new Error(error.toString());
                     }
                 }
             );
