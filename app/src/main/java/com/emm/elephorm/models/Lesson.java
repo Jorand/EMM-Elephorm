@@ -44,7 +44,6 @@ public class Lesson {
             if(fieldVideo.length() > 0) {
                 video = fieldVideo.getString(0);
             }
-            Log.d("custom", title);
             count++;
 
         } catch (JSONException e) {

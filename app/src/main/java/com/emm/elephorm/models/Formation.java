@@ -90,7 +90,6 @@ public class Formation {
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
 
-            Log.d("custom", ean);
         } catch (JSONException e) {
             e.printStackTrace();
         }
