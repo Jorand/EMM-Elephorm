@@ -51,7 +51,7 @@ public class Formation {
     protected String poster;
     protected boolean active;
     protected boolean free;
-    protected double progress; // Pourcentage
+    protected float progress; // Pourcentage
     protected String ean;
     protected List<Lesson> items = new ArrayList<Lesson>();
 
@@ -85,6 +85,7 @@ public class Formation {
                 JSONArray items = new JSONArray(data.getString("items"));
 
                 this.items = Lesson.getLessonList(items);
+                updateProgress();
             }
 
 
@@ -193,7 +194,26 @@ public class Formation {
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
+        int count = countViewedLessons(items);
 
+        progress = ((float) count/(float) videoCount) * 100;
+    }
+
+    /**
+     * Compte le nombre de leçons vues
+     * /!\ Récursive
+     * @return
+     */
+    protected int countViewedLessons(List<Lesson> lessons) {
+        int count = 0;
+        for(int i = 0;i<lessons.size();i++) {
+            if(lessons.get(i).viewed)
+                count++;
+
+            if(lessons.get(i).items.size() > 0)
+                count += countViewedLessons(lessons.get(i).items);
+        }
+        return count;
     }
 
     /**
