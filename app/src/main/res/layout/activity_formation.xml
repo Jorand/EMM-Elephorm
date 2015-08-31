@@ -28,4 +28,9 @@
         android:layout_marginStart="20dp"
         android:textAppearance="?android:attr/textAppearanceLarge"/>
 
+    <VideoView
+        android:id="@+id/video_player_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
 </RelativeLayout>

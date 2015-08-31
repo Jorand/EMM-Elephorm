@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.emm.elephorm.FormationsListActivity;
 import com.emm.elephorm.R;
@@ -116,6 +117,9 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
             @Override
             public void onUpdateFail(String error) {
 
+                swipeRefreshLayout.setRefreshing(false);
+                Toast toast = Toast.makeText(getActivity(), "ERREUR", Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 

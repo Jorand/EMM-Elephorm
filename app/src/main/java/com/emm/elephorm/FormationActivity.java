@@ -1,15 +1,20 @@
 package com.emm.elephorm;
 
 import android.content.Intent;
+import android.support.annotation.RequiresPermission;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.widget.ListView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.models.Formation;
@@ -18,6 +23,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FormationActivity extends AppCompatActivity {
+
+    VideoView video_player_view;
+    DisplayMetrics dm;
+    SurfaceView sur_View;
+    MediaController media_Controller;
 
     private String FormationId;
 
@@ -44,6 +54,7 @@ public class FormationActivity extends AppCompatActivity {
         }
 
         getFormation();
+        getInit();
     }
 
     @Override
@@ -73,6 +84,20 @@ public class FormationActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void getInit() {
+        video_player_view = (VideoView) findViewById(R.id.video_player_view);
+        media_Controller = new MediaController(this);
+        dm = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
+        int height = dm.heightPixels;
+        int width = dm.widthPixels;
+        video_player_view.setMinimumWidth(width);
+        //video_player_view.setMinimumHeight(height);
+        video_player_view.setMediaController(media_Controller);
+        video_player_view.setVideoPath("http://eas.elephorm.com/videos/tuto-cubase-7-les-nouveautes/presentation-de-cubase-7");
+        video_player_view.start();
+    }
+
     private void getFormation() {
 
         Formation.getFormation(FormationId, new Formation.getFormationCallback() {
@@ -80,14 +105,6 @@ public class FormationActivity extends AppCompatActivity {
             public void onGetFinished(Formation formation) {
 
                 myFormation = formation;
-
-                TextView title = (TextView) findViewById(R.id.TitleFormation);
-
-               /* Log.d("TAG", formation.getTitle());*/
-
-                title.setText(formation.getTitle());
-
-                //formationAdapter.notifyDataSetChanged();
 
             }
 
