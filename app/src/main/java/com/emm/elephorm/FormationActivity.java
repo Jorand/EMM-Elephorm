@@ -88,7 +88,6 @@ public class FormationActivity extends AppCompatActivity {
                 title.setText(formation.getTitle());
 
                 //formationAdapter.notifyDataSetChanged();
-
             }
 
             @Override

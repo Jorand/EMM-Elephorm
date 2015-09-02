@@ -27,6 +27,7 @@ public class Lesson {
     protected boolean free;
     protected boolean viewed;
     protected List<Lesson> items = new ArrayList<Lesson>();
+    protected int floor;
     private static final String ID_KEY = "LESSON_";
 
     public Lesson(JSONObject data) {
@@ -96,6 +97,7 @@ public class Lesson {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putBoolean(ID_KEY + id, viewed);
+        editor.commit();
     }
 
     /** STATICS **/
@@ -148,5 +150,13 @@ public class Lesson {
 
     public List<Lesson> getItems() {
         return items;
+    }
+
+    public int getFloor() {
+        return floor;
+    }
+
+    public void setFloor(int floor) {
+        this.floor = floor;
     }
 }

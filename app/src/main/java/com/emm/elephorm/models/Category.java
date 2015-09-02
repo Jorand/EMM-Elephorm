@@ -108,6 +108,8 @@ public class Category {
                         Gson gson = new Gson();
                         editor.putString("CATEGORIES", gson.toJson(categories));
 
+                        editor.commit();
+
                         callback.onUpdateFinished(categories);
                     }
                 },

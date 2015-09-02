@@ -1,8 +1,10 @@
 package com.emm.elephorm.models;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.android.volley.Response;
@@ -22,6 +24,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -113,6 +116,7 @@ public class Formation {
      */
     public static void getFormation(String ean, getFormationCallback cb) {
         final getFormationCallback callback = cb;
+
         // Test de connexion
         ConnectivityManager cm =
                 (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -194,9 +198,67 @@ public class Formation {
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
         int count = countViewedLessons(items);
 
         progress = ((float) count/(float) videoCount) * 100;
+
+        if(progress > 0) {
+            if(progress < 100) {
+                String currentFormationsString = preferences.getString("current_formations", "");
+                String[] currentFormations = currentFormationsString.split(";");
+                boolean isInList = false;
+                for (int i = 0; i < currentFormations.length; i++) {
+                    if (currentFormations[i].equals(ean))
+                        isInList = true;
+                }
+
+                if (!isInList) {
+                    if (currentFormations.length > 0)
+                        currentFormationsString += ";" + ean;
+                    else
+                        currentFormationsString = ean;
+
+                    SharedPreferences.Editor editor = preferences.edit();
+
+                    editor.putString("current_formations", currentFormationsString);
+                    editor.commit();
+                }
+            } else {
+                String currentFormationsString = preferences.getString("current_formations", "");
+                String[] currentFormations = currentFormationsString.split(";");
+
+                currentFormationsString = "";
+                for (int i = 0; i < currentFormations.length; i++) {
+                    if (!currentFormations[i].equals(ean))
+                        currentFormationsString +=
+                            (currentFormationsString.equals("") ? "" : ";")
+                            + currentFormations[i];
+                }
+
+
+                String finishedFormationsString = preferences.getString("finished_formations", "");
+                String[] finishedFormations = finishedFormationsString.split(";");
+                boolean isInList = false;
+                for (int i = 0; i < finishedFormations.length; i++) {
+                    if (finishedFormations[i].equals(ean))
+                        isInList = true;
+                }
+
+                if (!isInList) {
+                    if (finishedFormations.length > 0)
+                        finishedFormationsString += ";" + ean;
+                    else
+                        finishedFormationsString = ean;
+
+                    SharedPreferences.Editor editor = preferences.edit();
+
+                    editor.putString("finished_formations", finishedFormationsString);
+                    editor.putString("current_formations", currentFormationsString);
+                    editor.commit();
+                }
+            }
+        }
     }
 
     /**
@@ -214,6 +276,19 @@ public class Formation {
                 count += countViewedLessons(lessons.get(i).items);
         }
         return count;
+    }
+
+    public List<Lesson> getLessonList(int floor, List<Lesson> lessons) {
+        List<Lesson> lessonList = new ArrayList<Lesson>();
+
+        for(int i = 0;i<lessons.size();i++) {
+            lessonList.add(lessons.get(i));
+            lessonList.get(i).setFloor(floor);
+            if(lessons.get(i).getItems().size() > 0)
+                lessonList.addAll(getLessonList((floor + 1), lessons.get(i).getItems()));
+        }
+
+        return lessonList;
     }
 
     /**
