@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -24,7 +23,6 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -204,61 +202,56 @@ public class Formation {
         progress = ((float) count/(float) videoCount) * 100;
 
         if(progress > 0) {
+            addIdFromList("recommended_categories", subcategory);
             if(progress < 100) {
-                String currentFormationsString = preferences.getString("current_formations", "");
-                String[] currentFormations = currentFormationsString.split(";");
-                boolean isInList = false;
-                for (int i = 0; i < currentFormations.length; i++) {
-                    if (currentFormations[i].equals(ean))
-                        isInList = true;
-                }
-
-                if (!isInList) {
-                    if (currentFormations.length > 0)
-                        currentFormationsString += ";" + ean;
-                    else
-                        currentFormationsString = ean;
-
-                    SharedPreferences.Editor editor = preferences.edit();
-
-                    editor.putString("current_formations", currentFormationsString);
-                    editor.commit();
-                }
+                addIdFromList("current_formations", ean);
             } else {
-                String currentFormationsString = preferences.getString("current_formations", "");
-                String[] currentFormations = currentFormationsString.split(";");
-
-                currentFormationsString = "";
-                for (int i = 0; i < currentFormations.length; i++) {
-                    if (!currentFormations[i].equals(ean))
-                        currentFormationsString +=
-                            (currentFormationsString.equals("") ? "" : ";")
-                            + currentFormations[i];
-                }
-
-
-                String finishedFormationsString = preferences.getString("finished_formations", "");
-                String[] finishedFormations = finishedFormationsString.split(";");
-                boolean isInList = false;
-                for (int i = 0; i < finishedFormations.length; i++) {
-                    if (finishedFormations[i].equals(ean))
-                        isInList = true;
-                }
-
-                if (!isInList) {
-                    if (finishedFormations.length > 0)
-                        finishedFormationsString += ";" + ean;
-                    else
-                        finishedFormationsString = ean;
-
-                    SharedPreferences.Editor editor = preferences.edit();
-
-                    editor.putString("finished_formations", finishedFormationsString);
-                    editor.putString("current_formations", currentFormationsString);
-                    editor.commit();
-                }
+                removeIdFromList("current_formations", ean);
+                addIdFromList("finished_formations", ean);
             }
         }
+    }
+
+    protected void addIdFromList(String listName, String id) {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+        String listString = preferences.getString(listName, "");
+        String[] list = listString.split(";");
+        boolean isInList = false;
+        for (int i = 0; i < list.length; i++) {
+            if (list[i].equals(id))
+                isInList = true;
+        }
+
+        if (!isInList) {
+            if (list.length > 0)
+                listString += ";" + id;
+            else
+                listString = id;
+
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putString(listName, listString);
+            editor.commit();
+        }
+    }
+
+    protected void removeIdFromList(String listName, String id) {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+        String listString = preferences.getString(listName, "");
+        String[] list = listString.split(";");
+
+        listString = "";
+        for (int i = 0; i < list.length; i++) {
+            if (!list[i].equals(id))
+                listString +=
+                    (listString.equals("") ? "" : ";")
+                    + list[i];
+        }
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(listName, listString);
+        editor.commit();
     }
 
     /**
