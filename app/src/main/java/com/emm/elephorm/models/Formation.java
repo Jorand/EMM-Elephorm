@@ -1,9 +1,10 @@
 package com.emm.elephorm.models;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
+import android.preference.PreferenceManager;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -113,6 +114,7 @@ public class Formation {
      */
     public static void getFormation(String ean, getFormationCallback cb) {
         final getFormationCallback callback = cb;
+
         // Test de connexion
         ConnectivityManager cm =
                 (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -194,9 +196,62 @@ public class Formation {
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
         int count = countViewedLessons(items);
 
         progress = ((float) count/(float) videoCount) * 100;
+
+        if(progress > 0) {
+            addIdFromList("recommended_categories", subcategory);
+            if(progress < 100) {
+                addIdFromList("current_formations", ean);
+            } else {
+                removeIdFromList("current_formations", ean);
+                addIdFromList("finished_formations", ean);
+            }
+        }
+    }
+
+    protected void addIdFromList(String listName, String id) {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+        String listString = preferences.getString(listName, "");
+        String[] list = listString.split(";");
+        boolean isInList = false;
+        for (int i = 0; i < list.length; i++) {
+            if (list[i].equals(id))
+                isInList = true;
+        }
+
+        if (!isInList) {
+            if (list.length > 0)
+                listString += ";" + id;
+            else
+                listString = id;
+
+            SharedPreferences.Editor editor = preferences.edit();
+
+            editor.putString(listName, listString);
+            editor.commit();
+        }
+    }
+
+    protected void removeIdFromList(String listName, String id) {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+        String listString = preferences.getString(listName, "");
+        String[] list = listString.split(";");
+
+        listString = "";
+        for (int i = 0; i < list.length; i++) {
+            if (!list[i].equals(id))
+                listString +=
+                    (listString.equals("") ? "" : ";")
+                    + list[i];
+        }
+
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putString(listName, listString);
+        editor.commit();
     }
 
     /**
@@ -214,6 +269,19 @@ public class Formation {
                 count += countViewedLessons(lessons.get(i).items);
         }
         return count;
+    }
+
+    public List<Lesson> getLessonList(int floor, List<Lesson> lessons) {
+        List<Lesson> lessonList = new ArrayList<Lesson>();
+
+        for(int i = 0;i<lessons.size();i++) {
+            lessonList.add(lessons.get(i));
+            lessonList.get(i).setFloor(floor);
+            if(lessons.get(i).getItems().size() > 0)
+                lessonList.addAll(getLessonList((floor + 1), lessons.get(i).getItems()));
+        }
+
+        return lessonList;
     }
 
     /**
