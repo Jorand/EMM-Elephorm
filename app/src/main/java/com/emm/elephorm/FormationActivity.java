@@ -2,36 +2,44 @@ package com.emm.elephorm;
 
 import android.content.Intent;
 import android.support.annotation.RequiresPermission;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.emm.elephorm.adapters.CustomListAdapter;
+import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
+import com.emm.elephorm.models.Lesson;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FormationActivity extends AppCompatActivity {
+public class FormationActivity extends AppActivity {
 
     VideoView video_player_view;
     DisplayMetrics dm;
-    SurfaceView sur_View;
     MediaController media_Controller;
 
     private String FormationId;
-
     private Formation myFormation;
+
+    ImageLoader imageLoader = ElephormApp.getInstance().getImageLoader();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,11 +48,7 @@ public class FormationActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
-
-        Intent intent = getIntent();
-        FormationId = intent.getStringExtra("EXTRA_FORMATION_ID");
 
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
@@ -53,8 +57,24 @@ public class FormationActivity extends AppCompatActivity {
             actionBar.setTitle("Formation");
         }
 
+        Intent intent = getIntent();
+        FormationId = intent.getStringExtra("EXTRA_FORMATION_ID");
+
         getFormation();
-        getInit();
+
+        //getInit();
+
+        NetworkImageView poster = (NetworkImageView) findViewById(R.id.poster);
+        poster.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+                String url = myFormation.getTeaser();
+                intent.putExtra("url", "http://videos.elephorm.com/"+url+"/video");
+                startActivity(intent);
+            }
+        });
+
     }
 
     @Override
@@ -76,16 +96,11 @@ public class FormationActivity extends AppCompatActivity {
             return true;
         }
 
-        //if (id == R.id.home) {
-        //    onBackPressed();
-        //    return true;
-        //}
-
         return super.onOptionsItemSelected(item);
     }
 
     public void getInit() {
-        video_player_view = (VideoView) findViewById(R.id.video_player_view);
+        //video_player_view = (VideoView) findViewById(R.id.video_player_view);
         media_Controller = new MediaController(this);
         dm = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -106,11 +121,36 @@ public class FormationActivity extends AppCompatActivity {
 
                 myFormation = formation;
 
+                if (imageLoader == null)
+                    imageLoader = ElephormApp.getInstance().getImageLoader();
+                NetworkImageView poster = (NetworkImageView) findViewById(R.id.poster);
+
+                poster.setImageUrl(myFormation.getPoster(), imageLoader);
+
+                TextView titre = (TextView) findViewById(R.id.title);
+                titre.setText(myFormation.getTitle());
+
+                TextView subTitle = (TextView) findViewById(R.id.subtitle);
+                subTitle.setText(myFormation.getSubtitle());
+
+                TextView description = (TextView) findViewById(R.id.description);
+                description.setText(Html.fromHtml(myFormation.getDescription()));
+
+                TextView price = (TextView) findViewById(R.id.price);
+                price.setText(myFormation.getPrice());
+
+                TextView duration = (TextView) findViewById(R.id.duration);
+                duration.setText(myFormation.getDuration());
+
+
+
             }
 
             @Override
             public void onGetFail(String error) {
 
+                Toast toast = Toast.makeText(getApplicationContext(), "ERREUR", Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 

@@ -11,8 +11,6 @@ import com.emm.elephorm.R;
 import com.emm.elephorm.models.Category;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class ExpandableListAdapter extends BaseExpandableListAdapter {
 

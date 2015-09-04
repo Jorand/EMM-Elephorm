@@ -11,6 +11,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,13 +51,12 @@ public class Formation {
     protected String poster;
     protected boolean active;
     protected boolean free;
-    protected double progress; // Pourcentage
+    protected float progress; // Pourcentage
     protected String ean;
     protected List<Lesson> items = new ArrayList<Lesson>();
 
     public Formation(JSONObject data) {
         try {
-            id              = data.getString("_id");
             title           = data.getString("title");
             subtitle        = data.getString("subtitle");
             productUrl      = data.getString("product_url");
@@ -85,13 +85,20 @@ public class Formation {
                 JSONArray items = new JSONArray(data.getString("items"));
 
                 this.items = Lesson.getLessonList(items);
+                updateProgress();
             }
 
 
             progress = 0; // TODO : Aller chercher le progrès dans l'historique
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public String toJson() {
+        Gson gson = new Gson();
+        return gson.toJson(this);
     }
 
     //define callback interface
@@ -120,7 +127,6 @@ public class Formation {
                     public void onResponse(JSONObject response) {
                         Formation formation = new Formation(response);
                         callback.onGetFinished(formation);
-                        Log.d("compte", String.valueOf(Lesson.count));
                     }
                 },
                 new Response.ErrorListener() {
@@ -188,7 +194,26 @@ public class Formation {
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
+        int count = countViewedLessons(items);
 
+        progress = ((float) count/(float) videoCount) * 100;
+    }
+
+    /**
+     * Compte le nombre de leçons vues
+     * /!\ Récursive
+     * @return
+     */
+    protected int countViewedLessons(List<Lesson> lessons) {
+        int count = 0;
+        for(int i = 0;i<lessons.size();i++) {
+            if(lessons.get(i).viewed)
+                count++;
+
+            if(lessons.get(i).items.size() > 0)
+                count += countViewedLessons(lessons.get(i).items);
+        }
+        return count;
     }
 
     /**

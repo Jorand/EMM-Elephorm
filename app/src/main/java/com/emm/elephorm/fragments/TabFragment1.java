@@ -1,10 +1,8 @@
 package com.emm.elephorm.fragments;
 
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,6 +46,11 @@ public class TabFragment1 extends Fragment {
             @Override
             public void onGetFinished(Formation formation) {
                 Log.d("custom2", formation.getTitle());
+            }
+
+            @Override
+            public void onGetFail(String error) {
+
             }
         });
         */

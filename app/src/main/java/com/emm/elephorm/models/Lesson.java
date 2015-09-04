@@ -1,6 +1,10 @@
 package com.emm.elephorm.models;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
+
+import com.emm.elephorm.app.ElephormApp;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,6 +12,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Inikaam on 11/08/2015.
@@ -22,7 +27,7 @@ public class Lesson {
     protected boolean free;
     protected boolean viewed;
     protected List<Lesson> items = new ArrayList<Lesson>();
-    public static int count = 0;
+    private static final String ID_KEY = "LESSON_";
 
     public Lesson(JSONObject data) {
         try {
@@ -44,8 +49,9 @@ public class Lesson {
             if(fieldVideo.length() > 0) {
                 video = fieldVideo.getString(0);
             }
-            Log.d("custom", title);
-            count++;
+
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+            viewed = preferences.getBoolean(ID_KEY + id, false);
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,6 +87,17 @@ public class Lesson {
         return stringItem;
     }
 
+    public void setViewed() {
+        if(viewed)
+            return;
+
+        viewed = true;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
+        SharedPreferences.Editor editor = preferences.edit();
+
+        editor.putBoolean(ID_KEY + id, viewed);
+    }
+
     /** STATICS **/
 
     public static List<Lesson> getLessonList(JSONArray data) {
@@ -95,7 +112,7 @@ public class Lesson {
         return lessons;
     }
 
-    /** Getters & setters **/
+    /** Getters **/
 
     public String getId() {
         return id;

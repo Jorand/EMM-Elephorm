@@ -2,6 +2,7 @@ package com.emm.elephorm;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.models.Formation;
@@ -18,8 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class FormationsListActivity extends AppCompatActivity {
+public class FormationsListActivity extends AppActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
     private CustomListAdapter listAdapter;
     private String SubcategoryId;
@@ -49,6 +52,9 @@ public class FormationsListActivity extends AppCompatActivity {
 
         listView = (ListView) findViewById(R.id.formations_list);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
+
         View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
 
         //listView.addHeaderView(headerView);
@@ -56,7 +62,19 @@ public class FormationsListActivity extends AppCompatActivity {
         listAdapter = new CustomListAdapter(this, formationList);
         listView.setAdapter(listAdapter);
 
-        getListFormations();
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.setEnabled(false);
+
+        swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+
+                    getListFormations();
+                }
+            }
+        );
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -98,6 +116,11 @@ public class FormationsListActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onRefresh() {
+        getListFormations();
+    }
+
     private void getListFormations() {
 
         Formation.getSubcategoryFormations(SubcategoryId, new Formation.getFormationListCallback() {
@@ -111,6 +134,8 @@ public class FormationsListActivity extends AppCompatActivity {
                     formationList.add(obj);
 
                     listAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+
                 }
 
             }
@@ -118,6 +143,9 @@ public class FormationsListActivity extends AppCompatActivity {
             @Override
             public void onGetFail(String error) {
 
+                swipeRefreshLayout.setRefreshing(false);
+                Toast toast = Toast.makeText(getApplicationContext(), "ERREUR", Toast.LENGTH_LONG);
+                toast.show();
             }
         });
 

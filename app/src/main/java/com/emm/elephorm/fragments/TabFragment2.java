@@ -57,7 +57,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
                 public void run() {
                     swipeRefreshLayout.setRefreshing(true);
 
-                    prepareListCategory();
+                    prepareListCategory(true);
                 }
             }
         );
@@ -83,7 +83,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
     @Override
     public void onRefresh() {
-        prepareListCategory();
+        prepareListCategory(false);
     }
 
     /**
@@ -92,13 +92,13 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
     protected List<Category> categories = new ArrayList<>();
 
-    private void prepareListCategory() {
+    private void prepareListCategory(Boolean update) {
 
         listCategories.clear();
 
         swipeRefreshLayout.setRefreshing(true);
 
-        Category.getCategoryList(true, new Category.updateCallback() {
+        Category.getCategoryList(update, new Category.updateCallback() {
             @Override
             public void onUpdateFinished(List<Category> cats) {
                 categories = cats;
