@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -26,6 +27,10 @@ import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
 import com.emm.elephorm.models.Lesson;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -142,6 +147,60 @@ public class FormationActivity extends AppActivity {
                 TextView duration = (TextView) findViewById(R.id.duration);
                 duration.setText(myFormation.getDuration());
 
+                List<Lesson> items = myFormation.getItems();
+
+                for (int i = 0; i < items.size(); i++) {
+
+                    final Lesson obj = items.get(i);
+
+                    TextView item = new TextView(getApplicationContext());
+
+                    if (obj.getType().equals("video")) {
+
+                        item.setText("Video - "+obj.getTitle());
+                    }
+                    else {
+                        item.setText(obj.getTitle());
+                    }
+
+                    item.setPadding(10, 10, 10, 10);
+                    item.setTextColor(getResources().getColor(R.color.primary_dark_material_dark));
+
+                    LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+                    layout.addView(item);
+
+                    item.setOnClickListener(new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+
+                            if (obj.getType().equals("video")) {
+
+                                Intent intent = new Intent(getApplicationContext(), VideoActivity.class);
+                                try {
+                                    JSONObject video = new JSONObject(obj.getVideo());
+                                    String url = video.getString("filepath");
+                                    intent.putExtra("url", url);
+                                    startActivity(intent);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                //intent.putExtra("url", url);
+                                //startActivity(intent);
+                            }
+                            else {
+
+                                Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
+                                String id = obj.getId();
+                                intent.putExtra("EXTRA_LESSON_ID", id);
+                                startActivity(intent);
+                            }
+
+                        }
+
+                    });
+
+                }
 
 
             }

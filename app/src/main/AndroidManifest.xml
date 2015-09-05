@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".FormationActivity"
-            android:label="@string/title_activity_formation" >
+            android:label="@string/title_activity_formation"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".FormationsListActivity" />
@@ -39,6 +40,9 @@
         <activity
             android:name=".LessonsActivity"
             android:label="@string/title_activity_lessons" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".FormationActivity" />
         </activity>
         <activity
             android:name=".VideoActivity"
