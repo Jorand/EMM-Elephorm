@@ -37,19 +37,24 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
     private View v;
     private CustomListAdapter listAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout mEmptyViewContainer;
     private List<Formation> formationList = new ArrayList<>();
-    private TextView EmptyText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_tab_fragment1, container, false);
 
-        EmptyText = (TextView) v.findViewById(R.id.empty_text);
-        EmptyText.setVisibility(View.GONE);
+        // SWIPE REFRESH
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        mEmptyViewContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout_emptyView);
+        onCreateSwipeToRefresh(swipeRefreshLayout);
+        onCreateSwipeToRefresh(mEmptyViewContainer);
+        //swipeRefreshLayout.setEnabled(false);
         
         // INIT LISTVIEW
         ListView listView = (ListView) v.findViewById(R.id.homeList);
+        listView.setEmptyView(mEmptyViewContainer);
         listAdapter = new CustomListAdapter(getActivity(), formationList);
         listView.setAdapter(listAdapter);
 
@@ -65,86 +70,121 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         });
 
-        // SWIPE REFRESH
-        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
-        swipeRefreshLayout.setOnRefreshListener(this);
-        //swipeRefreshLayout.setEnabled(false);
-
         return v;
+    }
+
+    private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
+        // INIT SwipeRefreshLayout
+        refreshLayout.setColorSchemeResources(R.color.ColorPrimary);
+        refreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onResume(){
         // CREATE RESUME UPDATE
+        Log.d("LOG", "t1 onResume");
         super.onResume();
-        //getListFormations();
+        getListFormations();
     }
 
     @Override
     public void onRefresh() {
         // SWIPE REFRESH UPDATE
-        //getListFormations();
+        getListFormations();
+    }
+
+    private int current = 0;
+
+    private void updateAdapter(int lengh) {
+
+        current++;
+
+        if (current >= lengh) {
+
+            listAdapter.notifyDataSetChanged();
+
+            swipeRefreshLayout.setRefreshing(false);
+            mEmptyViewContainer.setRefreshing(false);
+
+            if (formationList.size() > 0) {
+                mEmptyViewContainer.setVisibility(View.GONE);
+            } else {
+                mEmptyViewContainer.setVisibility(View.VISIBLE);
+            }
+            current = 0;
+        }
     }
     
     private void getListFormations() {
+        //Log.d("LOG", "getListFormations");
 
         formationList.clear();
+        swipeRefreshLayout.setRefreshing(true);
+        mEmptyViewContainer.setRefreshing(true);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String listString = preferences.getString("recommended_categories", "");
         String[] list = listString.split(";");
-        
-        // CLEAR
-        //SharedPreferences.Editor editor = preferences.edit();
-        //editor.clear();
-        //editor.commit();
+
+        final int listLength = list.length;
 
         if (list.length > 1) {
+
             for (String aList : list) {
+
                 try {
                     JSONObject video = new JSONObject(aList);
                     final String id = video.getString("_id");
+                    //Log.d("LOG", id);
 
-                    Log.d("LOG", id);
+                    if (!id.isEmpty()) {
 
-                    Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
-                        @Override
-                        public void onGetFinished(List<Formation> formations) {
+                        mEmptyViewContainer.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(true);
+                        mEmptyViewContainer.setRefreshing(true);
 
-                            Log.d("LOG", "out : "+id);
+                        Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
+                            @Override
+                            public void onGetFinished(List<Formation> formations) {
+                                //Log.d("LOG", "out : " + id);
 
-                            for (int i = 0; i < formations.size(); i++) {
+                                for (int i = 0; i < formations.size(); i++) {
 
-                                Formation obj = formations.get(i);
+                                    Formation obj = formations.get(i);
 
-                                if (obj.getProgress() <= 0) {
-                                    formationList.add(obj);
+                                    if (obj.getProgress() <= 0) {
+                                        formationList.add(obj);
+                                    }
                                 }
+
+                                updateAdapter(listLength);
                             }
 
-                            listAdapter.notifyDataSetChanged();
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
+                            @Override
+                            public void onGetFail(String error) {
 
-                        @Override
-                        public void onGetFail(String error) {
+                                updateAdapter(listLength);
 
-                            swipeRefreshLayout.setRefreshing(false);
-                            Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
-                            toast.show();
-                        }
-                    });
+                                Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
+                                toast.show();
+
+                            }
+                        });
+
+                    } else {
+                        updateAdapter(listLength);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    updateAdapter(listLength);
                 }
             }
         }
         else {
             swipeRefreshLayout.setRefreshing(false);
-
-            EmptyText.setVisibility(View.VISIBLE);
+            mEmptyViewContainer.setRefreshing(false);
+            listAdapter.notifyDataSetChanged();
         }
     }
 

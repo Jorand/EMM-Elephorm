@@ -2,7 +2,7 @@
 
     <string name="app_name">Elephorm</string>
 
-     <string name="action_settings">Supprimer l\'historique</string>
+     <string name="action_settings">Supprimer les données enregister</string>
 
     <string name="tab_title_1">Home</string>
     <string name="tab_title_2">Tous les cours</string>

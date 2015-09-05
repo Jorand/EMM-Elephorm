@@ -45,7 +45,6 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout mEmptyViewContainer;
     private CustomListAdapter listAdapter;
-    private TextView EmptyText;
     private List<Formation> formationList = new ArrayList<>();
 
     private List<Formation> currentFormationList = new ArrayList<>();
@@ -69,8 +68,6 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
         listView.setEmptyView(mEmptyViewContainer);
         listAdapter = new CustomListAdapter(getActivity(), formationList);
         listView.setAdapter(listAdapter);
-
-        listView.setEmptyView(v.findViewById(R.id.empty_text));
 
         // EVENT LISTVIEW
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -96,6 +93,7 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume(){
         // CREATE RESUME UPDATE
+        Log.d("LOG", "t3 onResume");
         super.onResume();
         updateList();
     }
@@ -104,6 +102,28 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
     public void onRefresh() {
         // SWIPE REFRESH UPDATE
         updateList();
+    }
+
+    private int current = 0;
+
+    private void updateAdapter(int lengh) {
+
+        current++;
+
+        if (current >= lengh) {
+
+            listAdapter.notifyDataSetChanged();
+
+            swipeRefreshLayout.setRefreshing(false);
+            mEmptyViewContainer.setRefreshing(false);
+
+            if (formationList.size() > 0) {
+                mEmptyViewContainer.setVisibility(View.GONE);
+            } else {
+                mEmptyViewContainer.setVisibility(View.VISIBLE);
+            }
+            current = 0;
+        }
     }
 
     private void updateList() {
@@ -124,6 +144,8 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
         String listString = preferences.getString(key, "");
         String[] list = listString.split(";");
 
+        final int listLength = list.length;
+
         if (list.length > 1) {
 
             currentFormationList.clear();
@@ -132,6 +154,10 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
             for (String FormationId : list) {
 
                 if (!FormationId.isEmpty()) {
+
+                    mEmptyViewContainer.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
+                    mEmptyViewContainer.setRefreshing(true);
 
                     Formation.getFormation(FormationId, new Formation.getFormationCallback() {
                         @Override
@@ -151,21 +177,19 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                             formationList.add(formation);
 
-                            listAdapter.notifyDataSetChanged();
-
-                            swipeRefreshLayout.setRefreshing(false);
-                            mEmptyViewContainer.setRefreshing(false);
-                            mEmptyViewContainer.setVisibility(View.GONE);
+                            updateAdapter(listLength);
                         }
 
                         @Override
                         public void onGetFail(String error) {
-                            swipeRefreshLayout.setRefreshing(false);
-                            mEmptyViewContainer.setRefreshing(false);
+                            updateAdapter(listLength);
                             Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     });
+                }
+                else {
+                    updateAdapter(listLength);
                 }
             }
         }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,6 +69,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume(){
         // CREATE RESUME UPDATE
+        Log.d("LOG", "t2 onResume");
         super.onResume();
         prepareListCategory(false);
     }
