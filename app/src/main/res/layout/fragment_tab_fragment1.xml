@@ -10,8 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <ExpandableListView
-            android:id="@+id/expandableHomeList"
+        <ListView
+            android:id="@+id/homeList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

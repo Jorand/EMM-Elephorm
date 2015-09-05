@@ -1,17 +1,28 @@
 package com.emm.elephorm.fragments;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.emm.elephorm.FormationActivity;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.CustomListAdapter;
+import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,78 +30,109 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TabFragment1 extends Fragment {
+public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private View v;
-    private List<Formation> formationList = new ArrayList<>();
+
+    private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
-    private CustomListAdapter adapter;
+    private CustomListAdapter listAdapter;
+
+    private List<Formation> formationList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_tab_fragment1, container, false);
 
-        //listView = (ListView) v.findViewById(R.id.expandableHomeList);
+        listView = (ListView) v.findViewById(R.id.homeList);
 
-        // Header View
-        //View headerView = inflater.inflate(R.layout.list_header, null, false);
-        //listView1.addHeaderView(headerView);
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
 
-        //adapter = new CustomListAdapter((Activity) v.getContext(), formationList);
-        //listView.setAdapter(adapter);
 
-        //prepareListFormations();
-        /*
-        Formation.getFormation("E3760141112624", new Formation.getFormationCallback() {
+        listAdapter = new CustomListAdapter(getActivity(), formationList);
+        listView.setAdapter(listAdapter);
 
-            @Override
-            public void onGetFinished(Formation formation) {
-                Log.d("custom2", formation.getTitle());
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        swipeRefreshLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeRefreshLayout.setRefreshing(true);
+
+                    getListFormations();
+                }
             }
+        );
 
-            @Override
-            public void onGetFail(String error) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
+                Formation formation = formationList.get(position);
+                Intent intent = new Intent(getActivity(), FormationActivity.class);
+                String formationId = formation.getEan();
+                intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                startActivity(intent);
             }
         });
-        */
 
         return v;
     }
 
+    @Override
+    public void onRefresh() {
+        getListFormations();
+    }
 
-    protected List<Category> categories = new ArrayList<>();
+    private void getListFormations() {
 
-    /*private void prepareListFormations() {
+        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String listString = preferences.getString("recommended_categories", "");
+        String[] list = listString.split(";");
 
-        Category.getCategoryList(true, new Category.updateCallback() {
-            @Override
-            public void onUpdateFinished(List<Category> cats) {
-            categories = cats;
-            for (int i = 0; i < categories.size(); i++) {
+        Toast toast = Toast.makeText(getActivity(), String.valueOf(list.length), Toast.LENGTH_LONG);
+        toast.show();
 
-                Category obj = categories.get(i);
-            }
+        if (list.length > 1) {
 
-            categories.get(0).getSubcategories().get(0).getFormationList(true, new Subcategory.updateCallback() {
-                @Override
-                public void onUpdateFinished(List<Formation> formations) {
+            for (int i = 0; i < list.length; i++) {
 
-                    for (int i = 0; i < formations.size(); i++) {
+                try {
+                    JSONObject video = new JSONObject(list[i]);
+                    String id = video.getString("_id");
 
-                        Formation obj = formations.get(i);
+                    Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
+                        @Override
+                        public void onGetFinished(List<Formation> formations) {
 
-                        formationList.add(obj);
+                            for (int i = 0; i < formations.size(); i++) {
 
-                        adapter.notifyDataSetChanged();
-                    }
+                                Formation obj = formations.get(i);
+                                if (obj.getProgress() == 0) {
+                                    formationList.add(obj);
+                                }
+                            }
+
+                            listAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+
+                        @Override
+                        public void onGetFail(String error) {
+
+                            swipeRefreshLayout.setRefreshing(false);
+                            Toast toast = Toast.makeText(getActivity(), "ERREUR", Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            });
 
-            adapter.notifyDataSetChanged();
             }
-        });
+        }
+    }
 
-    }*/
 
 }

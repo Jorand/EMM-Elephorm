@@ -147,7 +147,9 @@ public class FormationActivity extends AppActivity {
                 TextView duration = (TextView) findViewById(R.id.duration);
                 duration.setText(myFormation.getDuration());
 
-                List<Lesson> items = myFormation.getItems();
+                List<Lesson> itemsff = myFormation.getItems();
+
+                List<Lesson> items = myFormation.getLessonList(0, myFormation.getItems());
 
                 for (int i = 0; i < items.size(); i++) {
 
@@ -163,11 +165,9 @@ public class FormationActivity extends AppActivity {
                         item.setText(obj.getTitle());
                     }
 
-                    item.setText(String.valueOf(obj.getFloor()));
-
                     int indent = 10 * obj.getFloor();
 
-                    item.setPadding(10, 10, 10, indent);
+                    item.setPadding(indent, 10, 10, 10);
                     item.setTextColor(getResources().getColor(R.color.primary_dark_material_dark));
 
                     LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
@@ -185,7 +185,10 @@ public class FormationActivity extends AppActivity {
                                     JSONObject video = new JSONObject(obj.getVideo());
                                     String url = video.getString("filepath");
                                     intent.putExtra("url", url);
+                                    obj.setViewed();
+                                    myFormation.updateProgress();
                                     startActivity(intent);
+
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
@@ -197,6 +200,8 @@ public class FormationActivity extends AppActivity {
                                 Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
                                 String id = obj.getId();
                                 intent.putExtra("EXTRA_LESSON_ID", id);
+                                obj.setViewed();
+                                myFormation.updateProgress();
                                 startActivity(intent);
                             }
 

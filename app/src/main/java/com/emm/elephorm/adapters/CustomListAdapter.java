@@ -58,7 +58,7 @@ public class CustomListAdapter extends BaseAdapter {
                 .findViewById(R.id.thumbnail);
         TextView title = (TextView) convertView.findViewById(R.id.title);
         TextView desc = (TextView) convertView.findViewById(R.id.desc);
-        //TextView cat = (TextView) convertView.findViewById(R.id.cat);
+        TextView progress = (TextView) convertView.findViewById(R.id.progress);
 
         // getting movie data for the row
         Formation f = formationItems.get(position);
@@ -74,7 +74,7 @@ public class CustomListAdapter extends BaseAdapter {
         desc.setText(f.getPublishedDate());
 
         // category
-        //cat.setText(f.getPublishedDate());
+        progress.setText(String.valueOf(f.getProgress()));
 
         return convertView;
     }
