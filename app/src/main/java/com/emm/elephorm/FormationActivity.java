@@ -163,7 +163,11 @@ public class FormationActivity extends AppActivity {
                         item.setText(obj.getTitle());
                     }
 
-                    item.setPadding(10, 10, 10, 10);
+                    item.setText(String.valueOf(obj.getFloor()));
+
+                    int indent = 10 * obj.getFloor();
+
+                    item.setPadding(10, 10, 10, indent);
                     item.setTextColor(getResources().getColor(R.color.primary_dark_material_dark));
 
                     LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
