@@ -1,7 +1,8 @@
 <resources>
+
     <string name="app_name">Elephorm</string>
 
-     <string name="action_settings">Settings</string>
+     <string name="action_settings">Supprimer l\'historique</string>
 
     <string name="tab_title_1">Home</string>
     <string name="tab_title_2">Tous les cours</string>
@@ -19,5 +20,7 @@
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_lessons">LessonsActivity</string>
+    <string name="home_empty_text">Il n\'y a pas de nouvelles vidéos pour le moment !</string>
+    <string name="tab3_empty_text">Votre historique est vide !</string>
 
 </resources>

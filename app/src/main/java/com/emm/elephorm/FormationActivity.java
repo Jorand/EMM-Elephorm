@@ -104,6 +104,13 @@ public class FormationActivity extends AppActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onResume(){
+        getFormation();
+        super.onResume();
+
+    }
+
     public void getInit() {
         //video_player_view = (VideoView) findViewById(R.id.video_player_view);
         media_Controller = new MediaController(this);
@@ -119,6 +126,8 @@ public class FormationActivity extends AppActivity {
     }
 
     private void getFormation() {
+
+        myFormation = null;
 
         Formation.getFormation(FormationId, new Formation.getFormationCallback() {
             @Override
@@ -159,7 +168,13 @@ public class FormationActivity extends AppActivity {
 
                     if (obj.getType().equals("video")) {
 
-                        item.setText("Video - "+obj.getTitle());
+                        if (obj.isViewed()) {
+                            item.setText("Visioné - "+obj.getTitle());
+                        }
+                        else {
+                            item.setText("Video - "+obj.getTitle());
+                        }
+
                     }
                     else {
                         item.setText(obj.getTitle());
@@ -200,8 +215,6 @@ public class FormationActivity extends AppActivity {
                                 Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
                                 String id = obj.getId();
                                 intent.putExtra("EXTRA_LESSON_ID", id);
-                                obj.setViewed();
-                                myFormation.updateProgress();
                                 startActivity(intent);
                             }
 

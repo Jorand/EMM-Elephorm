@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +26,6 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
     private ListView listView;
     private CustomListAdapter listAdapter;
     private String SubcategoryId;
-
     private List<Formation> formationList = new ArrayList<>();
 
     @Override
@@ -34,48 +33,32 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formations_list);
 
+        // TOOLBAR
         Toolbar toolbar = (Toolbar) findViewById(R.id.Ftoolbar);
         setSupportActionBar(toolbar);
-
         ActionBar actionBar = getSupportActionBar();
 
+        // GET EXTRA
         Intent intent = getIntent();
         SubcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
         String SubcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
 
+        // SET TOOLBAR TITLE
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-
             actionBar.setTitle(SubcategoryTitle);
         }
 
+        // INIT LISTVIEW
         listView = (ListView) findViewById(R.id.formations_list);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
-
-        View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
-
+        //View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
         //listView.addHeaderView(headerView);
 
         listAdapter = new CustomListAdapter(this, formationList);
         listView.setAdapter(listAdapter);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-
-        swipeRefreshLayout.setEnabled(false);
-
-        swipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeRefreshLayout.setRefreshing(true);
-
-                    getListFormations();
-                }
-            }
-        );
-
+        // LISTVIEW EVENTS
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -86,6 +69,12 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
                 startActivity(intent);
             }
         });
+
+        // SWIPE REFRESH
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        //swipeRefreshLayout.setEnabled(false);
 
     }
 
@@ -108,43 +97,49 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
             return true;
         }
 
-       // if (id == R.id.home) {
-        //    onBackPressed();
-         //   return true;
-       // }
-
         return super.onOptionsItemSelected(item);
     }
 
     @Override
+    public void onResume(){
+        // CREATE RESUME UPDATE
+        //Log.d("LOG", "onResume");
+        super.onResume();
+        getListFormations();
+    }
+
+    @Override
     public void onRefresh() {
+        // SWIPE REFRESH UPDATE
+        //Log.d("LOG", "onRefresh");
         getListFormations();
     }
 
     private void getListFormations() {
+        //Log.d("LOG", "update : "+SubcategoryId);
+
+        formationList.clear(); // Clear list
 
         Formation.getSubcategoryFormations(SubcategoryId, new Formation.getFormationListCallback() {
             @Override
             public void onGetFinished(List<Formation> formations) {
 
+                formationList.clear();
+
                 for (int i = 0; i < formations.size(); i++) {
 
                     Formation obj = formations.get(i);
-
                     formationList.add(obj);
 
                     listAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
-
                 }
-
             }
 
             @Override
             public void onGetFail(String error) {
-
                 swipeRefreshLayout.setRefreshing(false);
-                Toast toast = Toast.makeText(getApplicationContext(), "ERREUR", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT);
                 toast.show();
             }
         });

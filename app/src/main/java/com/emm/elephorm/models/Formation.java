@@ -90,7 +90,7 @@ public class Formation {
             }
 
 
-            progress = 0; // TODO : Aller chercher le progrès dans l'historique
+            //progress = 0; // TODO : Aller chercher le progrès dans l'historique
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -446,7 +446,7 @@ public class Formation {
         return active;
     }
 
-    public double getProgress() {
+    public float getProgress() {
         return progress;
     }
 

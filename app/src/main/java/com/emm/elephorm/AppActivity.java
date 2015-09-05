@@ -13,6 +13,8 @@ import android.widget.TextView;
  */
 public abstract class AppActivity extends AppCompatActivity {
 
+    private String TAG = AppActivity.class.getSimpleName();
+
     protected SharedPreferences preferences;
 
     protected void onCreate(Bundle savedInstanceState) {

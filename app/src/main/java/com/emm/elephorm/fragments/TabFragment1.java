@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
@@ -31,40 +33,27 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+    
     private View v;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ListView listView;
     private CustomListAdapter listAdapter;
-
+    private SwipeRefreshLayout swipeRefreshLayout;
     private List<Formation> formationList = new ArrayList<>();
+    private TextView EmptyText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_tab_fragment1, container, false);
 
-        listView = (ListView) v.findViewById(R.id.homeList);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
-
-
+        EmptyText = (TextView) v.findViewById(R.id.empty_text);
+        EmptyText.setVisibility(View.GONE);
+        
+        // INIT LISTVIEW
+        ListView listView = (ListView) v.findViewById(R.id.homeList);
         listAdapter = new CustomListAdapter(getActivity(), formationList);
         listView.setAdapter(listAdapter);
 
-        swipeRefreshLayout.setOnRefreshListener(this);
-
-        swipeRefreshLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeRefreshLayout.setRefreshing(true);
-
-                    getListFormations();
-                }
-            }
-        );
-
+        // LISTVIEW EVENT
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -76,39 +65,60 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
             }
         });
 
+        // SWIPE REFRESH
+        swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
+        swipeRefreshLayout.setOnRefreshListener(this);
+        //swipeRefreshLayout.setEnabled(false);
+
         return v;
     }
 
     @Override
-    public void onRefresh() {
-        getListFormations();
+    public void onResume(){
+        // CREATE RESUME UPDATE
+        super.onResume();
+        //getListFormations();
     }
 
+    @Override
+    public void onRefresh() {
+        // SWIPE REFRESH UPDATE
+        //getListFormations();
+    }
+    
     private void getListFormations() {
+
+        formationList.clear();
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String listString = preferences.getString("recommended_categories", "");
         String[] list = listString.split(";");
-
-        Toast toast = Toast.makeText(getActivity(), String.valueOf(list.length), Toast.LENGTH_LONG);
-        toast.show();
+        
+        // CLEAR
+        //SharedPreferences.Editor editor = preferences.edit();
+        //editor.clear();
+        //editor.commit();
 
         if (list.length > 1) {
-
-            for (int i = 0; i < list.length; i++) {
-
+            for (String aList : list) {
                 try {
-                    JSONObject video = new JSONObject(list[i]);
-                    String id = video.getString("_id");
+                    JSONObject video = new JSONObject(aList);
+                    final String id = video.getString("_id");
+
+                    Log.d("LOG", id);
 
                     Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
                         @Override
                         public void onGetFinished(List<Formation> formations) {
 
+                            Log.d("LOG", "out : "+id);
+
                             for (int i = 0; i < formations.size(); i++) {
 
                                 Formation obj = formations.get(i);
-                                if (obj.getProgress() == 0) {
+
+                                if (obj.getProgress() <= 0) {
                                     formationList.add(obj);
                                 }
                             }
@@ -121,7 +131,7 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
                         public void onGetFail(String error) {
 
                             swipeRefreshLayout.setRefreshing(false);
-                            Toast toast = Toast.makeText(getActivity(), "ERREUR", Toast.LENGTH_LONG);
+                            Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     });
@@ -129,8 +139,12 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
+        }
+        else {
+            swipeRefreshLayout.setRefreshing(false);
+
+            EmptyText.setVisibility(View.VISIBLE);
         }
     }
 
