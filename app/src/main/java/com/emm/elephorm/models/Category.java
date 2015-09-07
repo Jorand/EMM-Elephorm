@@ -106,7 +106,7 @@ public class Category {
                         // stockage
                         SharedPreferences.Editor editor = preferences.edit();
                         Gson gson = new Gson();
-                        editor.putString("CATEGORIES", gson.toJson(categories));
+                        editor.putString("categories", gson.toJson(categories));
 
                         editor.commit();
 
