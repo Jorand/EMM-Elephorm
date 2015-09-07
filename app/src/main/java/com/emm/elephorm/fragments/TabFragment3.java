@@ -7,33 +7,18 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.NetworkImageView;
-import com.emm.elephorm.AppActivity;
 import com.emm.elephorm.FormationActivity;
-import com.emm.elephorm.LessonsActivity;
 import com.emm.elephorm.R;
-import com.emm.elephorm.VideoActivity;
 import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
-import com.emm.elephorm.models.Lesson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +82,7 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume(){
         // CREATE RESUME UPDATE
-        Log.d("LOG", "t3 onResume");
+        //Log.d("LOG", "t3 onResume");
         super.onResume();
         updateList();
     }

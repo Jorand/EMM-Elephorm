@@ -24,7 +24,13 @@
     <string name="tab3_empty_text">Votre historique est vide !</string>
     <string name="description_label">Description</string>
     <string name="price_label">Prix :</string>
-    <string name="items_label">Sommaire :</string>
+    <string name="items_label">Sommaire</string>
     <string name="lesson_count_label">" leçons"</string>
+
+    <string name="dialog_exit_msg">Êtes vous certain(e) de vouloir supprimer toutes les données enregistées ?</string>
+    <string name="dialog_exit_title">Attention</string>
+
+    <string name="yes">Oui</string>
+    <string name="cancel">Non</string>
 
 </resources>

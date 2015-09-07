@@ -37,13 +37,6 @@
                 android:value=".FormationsListActivity" />
         </activity>
         <activity
-            android:name=".LessonsActivity"
-            android:label="@string/title_activity_lessons" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".FormationActivity" />
-        </activity>
-        <activity
             android:name=".VideoActivity"
             android:label="@string/title_activity_video"
             android:launchMode="singleTask"

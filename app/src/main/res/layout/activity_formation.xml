@@ -28,15 +28,32 @@
             android:layout_height="wrap_content"
             android:padding="16dp">
 
-            <!-- Thumbnail Image -->
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/poster"
+            <RelativeLayout
+                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="centerCrop"
-                android:clickable="true"
-                android:layout_marginBottom="10dp"
-                android:background="@color/ImgGey"/>
+                android:background="@color/ImgGey"
+                android:layout_height="wrap_content">
+
+                <!-- Thumbnail Image -->
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/poster"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scaleType="centerCrop"
+                    android:clickable="true"
+                    android:layout_marginBottom="10dp"
+                    android:background="@color/ImgGey"/>
+
+                <ImageView
+                    android:id="@+id/play_image"
+                    android:src="@drawable/ic_action_play_arrow"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:alpha="0.9"
+                    android:layout_centerInParent="true"
+                    />
+
+            </RelativeLayout>
 
             <TextView
                 android:id="@+id/title"
@@ -98,7 +115,7 @@
                 android:id="@+id/description_label"
                 android:textColor="@color/ColorTxt"
                 android:textStyle="bold"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:text="@string/description_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -152,7 +169,7 @@
                 android:id="@+id/items_label"
                 android:textColor="@color/ColorTxt"
                 android:textStyle="bold"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:text="@string/items_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

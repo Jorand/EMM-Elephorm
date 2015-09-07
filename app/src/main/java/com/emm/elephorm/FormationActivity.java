@@ -12,6 +12,7 @@ import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
@@ -70,8 +71,6 @@ public class FormationActivity extends AppActivity {
         Drawable draw = getDrawable(R.drawable.custom_progressbar);
         progress.setProgressDrawable(draw);
 
-        getFormation();
-
         NetworkImageView poster = (NetworkImageView) findViewById(R.id.poster);
         poster.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -98,9 +97,7 @@ public class FormationActivity extends AppActivity {
         myFormation = null;
 
         LinearLayout layout = (LinearLayout) findViewById(R.id.items);
-
-        if(layout.getChildCount() > 0)
-            layout.removeAllViews();
+        layout.removeAllViews();
 
         Formation.getFormation(FormationId, new Formation.getFormationCallback() {
             @Override
@@ -114,6 +111,9 @@ public class FormationActivity extends AppActivity {
 
                 poster.setImageUrl(myFormation.getPoster(), imageLoader);
 
+                ImageView play = (ImageView) findViewById(R.id.play_image);
+                play.setAlpha((float) 0.9);
+
                 TextView titre = (TextView) findViewById(R.id.title);
                 titre.setText(myFormation.getTitle());
 
@@ -124,7 +124,7 @@ public class FormationActivity extends AppActivity {
                     subTitle.setVisibility(View.GONE);
 
                 TextView category = (TextView) findViewById(R.id.category);
-                category.setText(myFormation.getCategoryName()+" / "+myFormation.getSubcategoryName());
+                category.setText(myFormation.getCategoryName()+" > "+myFormation.getSubcategoryName());
 
                 TextView description = (TextView) findViewById(R.id.description);
                 description.setText(Html.fromHtml(myFormation.getDescription()));
@@ -140,7 +140,7 @@ public class FormationActivity extends AppActivity {
                 TextView countLessons = (TextView) findViewById(R.id.count_items);
                 countLessons.setText(myFormation.getVideoCount() + getString(R.string.lesson_count_label));
 
-                int viewedVideo = 0;
+                Log.d("LOG", "OKKKK : "+items.size());
 
                 for (int i = 0; i < items.size(); i++) {
 
@@ -166,13 +166,10 @@ public class FormationActivity extends AppActivity {
 
                         item.setText(obj.getTitle());
                         item.setClickable(true);
-                        //item.setFocusableInTouchMode(true);
                         item.setBackgroundResource(R.drawable.label_bg);
 
                         if (obj.isViewed()) {
                             item.setTextColor(getResources().getColor(R.color.ColorGey));
-
-                            viewedVideo++;
                         }
 
                     } else {
@@ -218,7 +215,7 @@ public class FormationActivity extends AppActivity {
             @Override
             public void onGetFail(String error) {
 
-                Toast toast = Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT);
                 toast.show();
             }
         });

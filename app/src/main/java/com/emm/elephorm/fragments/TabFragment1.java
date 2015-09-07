@@ -142,8 +142,6 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
 
             for (String id : list) {
 
-                Log.d("LOG", id);
-
                 if (!id.isEmpty()) {
 
                     mEmptyViewContainer.setVisibility(View.GONE);
@@ -153,7 +151,6 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
                     Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
                         @Override
                         public void onGetFinished(List<Formation> formations) {
-                            //Log.d("LOG", "out : " + id);
 
                             for (int i = 0; i < formations.size(); i++) {
 
@@ -163,7 +160,6 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
                                     formationList.add(obj);
                                 }
                             }
-
                             updateAdapter(listLength);
                         }
 
@@ -172,7 +168,7 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
 
                             updateAdapter(listLength);
 
-                            Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(ElephormApp.getInstance().getBaseContext(), error, Toast.LENGTH_SHORT);
                             toast.show();
 
                         }

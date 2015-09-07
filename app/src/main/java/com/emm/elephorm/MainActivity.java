@@ -1,5 +1,7 @@
 package com.emm.elephorm;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -55,15 +57,8 @@ public class MainActivity extends AppActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
 
-            Log.d("LOG", "DELETE");
+            confirmReset();
 
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.clear();
-            editor.commit();
-
-            finish();
-            startActivity(getIntent());
             return true;
         }
 
@@ -106,9 +101,39 @@ public class MainActivity extends AppActivity {
         });
     }
 
-    public void goToFormation(View view) {
-        Intent intent = new Intent(this, FormationActivity.class);
-        intent.putExtra("EXTRA_FORMATION_ID", "E3760141113812");
-        startActivity(intent);
+    private void confirmReset() {
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage(R.string.dialog_exit_msg)
+                .setTitle(R.string.dialog_exit_title);
+
+        alertDialogBuilder
+                .setCancelable(false)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        resetPreferences();
+
+                        finish();
+                        startActivity(getIntent());
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void resetPreferences() {
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.clear();
+        editor.apply();
+
     }
 }
