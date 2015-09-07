@@ -28,9 +28,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Created by Inikaam on 11/08/2015.
- */
 public class Formation {
     protected String id;
     protected String title;
@@ -57,7 +54,7 @@ public class Formation {
     protected boolean free;
     protected float progress; // Pourcentage
     protected String ean;
-    protected List<Lesson> items = new ArrayList<Lesson>();
+    protected List<Lesson> items = new ArrayList<>();
 
     public Formation(JSONObject data) {
         try {
@@ -82,13 +79,22 @@ public class Formation {
             JSONObject tempObj = new JSONObject(data.getString("rating"));
             rating = !tempObj.getString("average").equals("null") ? Double.parseDouble(tempObj.getString("average")) : 0;
 
-            tempObj = new JSONObject(data.getString("category"));
-            categoryId = tempObj.getString("_id");
-            categoryName = tempObj.getString("title");
-
-            tempObj = new JSONObject(data.getString("subcategory"));
-            subcategoryId = tempObj.getString("_id");
-            subcategoryName = tempObj.getString("title");
+            if(data.getString("category").contains("{")) {
+                tempObj = new JSONObject(data.getString("category"));
+                categoryId = tempObj.getString("_id");
+                categoryName = tempObj.getString("title");
+            } else {
+                categoryId = data.getString("category");
+                categoryName = "";
+            }
+            if(data.getString("subcategory").contains("{")) {
+                tempObj = new JSONObject(data.getString("subcategory"));
+                subcategoryId = tempObj.getString("_id");
+                subcategoryName = tempObj.getString("title");
+            } else {
+                subcategoryId = data.getString("subcategory");
+                subcategoryName = "";
+            }
 
             // Gestion des items
             if(data.has("items")) {
@@ -176,8 +182,8 @@ public class Formation {
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
-                        JSONObject obj = null;
-                        List<Formation> formations = new ArrayList<Formation>();
+                        JSONObject obj;
+                        List<Formation> formations = new ArrayList<>();
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 obj = response.getJSONObject(i);
@@ -210,7 +216,7 @@ public class Formation {
 
         progress = ((float) count/(float) videoCount) * 100;
 
-        if(progress > 0) {
+        if (progress > 0) {
             addIdFromList("recommended_categories", subcategoryId);
             if(progress < 100) {
                 addIdFromList("current_formations", ean);
@@ -226,8 +232,8 @@ public class Formation {
         String listString = preferences.getString(listName, "");
         String[] list = listString.split(";");
         boolean isInList = false;
-        for (int i = 0; i < list.length; i++) {
-            if (list[i].equals(id))
+        for (String aList : list) {
+            if (aList.equals(id))
                 isInList = true;
         }
 
@@ -250,11 +256,11 @@ public class Formation {
         String[] list = listString.split(";");
 
         listString = "";
-        for (int i = 0; i < list.length; i++) {
-            if (!list[i].equals(id))
+        for (String aList : list) {
+            if (!aList.equals(id))
                 listString +=
                     (listString.equals("") ? "" : ";")
-                    + list[i];
+                    + aList;
         }
 
         SharedPreferences.Editor editor = preferences.edit();
@@ -266,7 +272,7 @@ public class Formation {
     /**
      * Compte le nombre de leçons vues
      * /!\ Récursive
-     * @return
+     * @return int
      */
     public int countViewedLessons(List<Lesson> lessons) {
         int count = 0;
@@ -281,7 +287,7 @@ public class Formation {
     }
 
     public List<Lesson> getLessonList(int floor, List<Lesson> lessons) {
-        List<Lesson> lessonList = new ArrayList<Lesson>();
+        List<Lesson> lessonList = new ArrayList<>();
 
         for(int i = 0;i<lessons.size();i++) {
             lessonList.add(lessons.get(i));
@@ -295,11 +301,11 @@ public class Formation {
 
     /**
      * Renvoie la publishedDate au format dd/mm/yyyy
-     * @return
+     * @return string
      */
     protected String getPublishedDateFormated() {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.FRANCE);
-        Date dateObj = null;
+        Date dateObj;
         try {
             dateObj = formatter.parse(publishedDate);
             String[] parts = formatter.format(dateObj).split("-");
