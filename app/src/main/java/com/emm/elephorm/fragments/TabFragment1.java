@@ -92,7 +92,7 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void onResume(){
         // CREATE RESUME UPDATE
-        Log.d("LOG", "t1 onResume");
+        //Log.d("LOG", "t1 onResume");
         super.onResume();
         getListFormations();
     }

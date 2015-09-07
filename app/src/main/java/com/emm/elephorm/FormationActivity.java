@@ -97,6 +97,11 @@ public class FormationActivity extends AppActivity {
 
         myFormation = null;
 
+        LinearLayout layout = (LinearLayout) findViewById(R.id.items);
+
+        if(layout.getChildCount() > 0)
+            layout.removeAllViews();
+
         Formation.getFormation(FormationId, new Formation.getFormationCallback() {
             @Override
             public void onGetFinished(Formation formation) {
@@ -173,7 +178,7 @@ public class FormationActivity extends AppActivity {
                         item.setText(obj.getTitle());
                     }
 
-                    LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
+                    LinearLayout layout = (LinearLayout) findViewById(R.id.items);
                     layout.addView(item);
 
                     item.setOnClickListener(new View.OnClickListener() {

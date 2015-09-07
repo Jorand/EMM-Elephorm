@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
+import com.emm.elephorm.AppActivity;
 import com.emm.elephorm.FormationActivity;
 import com.emm.elephorm.LessonsActivity;
 import com.emm.elephorm.R;
@@ -186,7 +187,7 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
                         @Override
                         public void onGetFail(String error) {
                             updateAdapter(listLength);
-                            Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
+                            Toast toast = Toast.makeText(ElephormApp.getInstance().getBaseContext(), error, Toast.LENGTH_SHORT);
                             toast.show();
                         }
                     });
