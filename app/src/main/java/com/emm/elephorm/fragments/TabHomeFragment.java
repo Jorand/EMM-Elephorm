@@ -7,18 +7,29 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
+import com.emm.elephorm.FormationsListActivity;
 import com.emm.elephorm.R;
+import com.emm.elephorm.adapters.CategoryExpandableListAdapter;
+import com.emm.elephorm.adapters.FormationExpandableListAdapter;
 import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.app.ElephormApp;
+import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
+import com.emm.elephorm.models.Subcategory;
+import com.emm.elephorm.models.TitleList;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +45,11 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private SwipeRefreshLayout mEmptyViewContainer;
     private List<Formation> formationList = new ArrayList<>();
 
+    private FormationExpandableListAdapter titleListAdapter;
+    private ArrayList<TitleList> titleLists = new ArrayList<>();
+
+    ArrayList<Formation> firstFormations = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -45,7 +61,8 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
         onCreateSwipeToRefresh(swipeRefreshLayout);
         onCreateSwipeToRefresh(mEmptyViewContainer);
         //swipeRefreshLayout.setEnabled(false);
-        
+        /*
+
         // INIT LISTVIEW
         ListView listView = (ListView) v.findViewById(R.id.homeList);
         listView.setEmptyView(mEmptyViewContainer);
@@ -69,6 +86,30 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
                 startActivity(intent);
             }
         });
+        */
+
+        // INIT EXPENDABLELIST
+        ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.homeExpandableFormationsList);
+        //expListView.setDivider(null);
+
+        titleListAdapter = new FormationExpandableListAdapter(v.getContext(), titleLists);
+        expListView.setAdapter(titleListAdapter);
+
+        // EXPENDABLELIST EVENT
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+                Formation formation = titleLists.get(groupPosition).getFormations().get(childPosition);
+                Intent intent = new Intent(getActivity(), FormationActivity.class);
+                String formationId = formation.getEan();
+                intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
+                startActivity(intent);
+
+                return false;
+            }
+        });
 
         return v;
     }
@@ -90,6 +131,7 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public void onRefresh() {
         // SWIPE REFRESH UPDATE
+        //Log.d("LOG", "t1 onRefresh");
         getListFormations();
     }
 
@@ -101,7 +143,22 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         if (current >= lengh) {
 
-            listAdapter.notifyDataSetChanged();
+            firstFormations.clear();
+
+            if (formationList.size() > 0) {
+
+                firstFormations.add(formationList.get(1));
+                firstFormations.add(formationList.get(2));
+                firstFormations.add(formationList.get(3));
+
+                TitleList newsList = new TitleList("Nouveautés", firstFormations);
+                titleLists.add(newsList);
+
+                TitleList recommendedList = new TitleList("Recommandé pour vous", firstFormations);
+                titleLists.add(recommendedList);
+            }
+
+            titleListAdapter.notifyDataSetChanged();
 
             swipeRefreshLayout.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
@@ -117,6 +174,8 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     
     private void getListFormations() {
         //Log.d("LOG", "getListFormations");
+
+        titleLists.clear();
 
         formationList.clear();
         swipeRefreshLayout.setRefreshing(true);
@@ -150,6 +209,9 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                     formationList.add(obj);
                                 }
                             }
+
+                            titleListAdapter.notifyDataSetChanged();
+
                             updateAdapter(listLength);
                         }
 

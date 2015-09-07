@@ -11,14 +11,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
 import com.emm.elephorm.R;
+import com.emm.elephorm.adapters.FormationExpandableListAdapter;
 import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
+import com.emm.elephorm.models.TitleList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +42,9 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
     private List<Formation> finishedFormationList = new ArrayList<>();
     private ListView listView;
 
+    private FormationExpandableListAdapter titleListAdapter;
+    private ArrayList<TitleList> titleLists = new ArrayList<>();
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
@@ -50,6 +56,8 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
         onCreateSwipeToRefresh(swipeRefreshLayout);
         onCreateSwipeToRefresh(mEmptyViewContainer);
         //swipeRefreshLayout.setEnabled(false);
+
+        /*
 
         // INIT LISTVIEW
         listView = (ListView) v.findViewById(R.id.list);
@@ -67,6 +75,31 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
                 intent.putExtra("EXTRA_FORMATION_ID", formationId);
                 intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
                 startActivity(intent);
+            }
+        });
+
+        */
+
+        // INIT EXPENDABLELIST
+        ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.historyExpandableList);
+        //expListView.setDivider(null);
+
+        titleListAdapter = new FormationExpandableListAdapter(v.getContext(), titleLists);
+        expListView.setAdapter(titleListAdapter);
+
+        // EXPENDABLELIST EVENT
+        expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+
+                Formation formation = titleLists.get(groupPosition).getFormations().get(childPosition);
+                Intent intent = new Intent(getActivity(), FormationActivity.class);
+                String formationId = formation.getEan();
+                intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
+                startActivity(intent);
+
+                return false;
             }
         });
 
@@ -101,7 +134,17 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
 
         if (current >= lengh) {
 
-            listAdapter.notifyDataSetChanged();
+            if (currentFormationList.size() > 0) {
+                TitleList newsList = new TitleList("En cours", currentFormationList);
+                titleLists.add(newsList);
+            }
+
+            if (finishedFormationList.size() > 0) {
+                TitleList recommendedList = new TitleList("Terminées", finishedFormationList);
+                titleLists.add(recommendedList);
+            }
+
+            titleListAdapter.notifyDataSetChanged();
 
             swipeRefreshLayout.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
@@ -126,6 +169,8 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
 
     private void getFormations(String key) {
         //Log.d("LOG", "getFormations "+key);
+
+        titleLists.clear();
 
         final String listType = key;
 
@@ -185,7 +230,7 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
         else {
             swipeRefreshLayout.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
-            listAdapter.notifyDataSetChanged();
+            titleListAdapter.notifyDataSetChanged();
         }
     }
 
