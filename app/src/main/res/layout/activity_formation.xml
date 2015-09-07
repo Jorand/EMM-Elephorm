@@ -31,7 +31,6 @@
             <RelativeLayout
                 android:gravity="center"
                 android:layout_width="match_parent"
-                android:background="@color/ImgGey"
                 android:layout_height="wrap_content">
 
                 <!-- Thumbnail Image -->
@@ -42,14 +41,25 @@
                     android:scaleType="centerCrop"
                     android:clickable="true"
                     android:layout_marginBottom="10dp"
-                    android:background="@color/ImgGey"/>
+                    android:background="@color/ImgGey" />
+
+                <ImageView
+                    android:id="@+id/trendingImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignBottom="@+id/poster"
+                    android:layout_alignTop="@+id/poster"
+                    android:alpha="0.5"
+                    android:background="@color/black_overlay"
+                    android:src="@color/black_overlay" />
 
                 <ImageView
                     android:id="@+id/play_image"
                     android:src="@drawable/ic_action_play_arrow"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:alpha="0.9"
                     android:layout_centerInParent="true"
                     />
 
@@ -87,7 +97,7 @@
                 <ProgressBar
                     android:id="@+id/progress"
                     android:layout_width="match_parent"
-                    android:layout_height="10dp"
+                    android:layout_height="15dp"
                     android:layout_toLeftOf="@+id/progress_text"
                     android:layout_toStartOf="@+id/progress_text"
                     android:layout_centerInParent="true"
@@ -131,6 +141,7 @@
                 android:orientation="horizontal"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
+                android:gravity="center_vertical"
                 android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -139,6 +150,8 @@
                     android:id="@+id/price_label"
                     android:text="@string/price_label"
                     android:textStyle="bold"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/ColorTitle"
                     android:layout_marginRight="6dp"
                     android:layout_marginEnd="6dp"
                     android:layout_width="wrap_content"
@@ -148,18 +161,39 @@
                     android:id="@+id/price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:layout_marginRight="20dp"
                     android:layout_marginEnd="20dp" />
 
+                <ImageView
+                    android:id="@+id/time_image"
+                    android:src="@drawable/ic_action_access_time"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
                 <TextView
                     android:id="@+id/duration"
+                    android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="20dp"
                     android:layout_marginEnd="20dp"/>
 
+                <ImageView
+                    android:id="@+id/items_image"
+                    android:gravity="center_vertical"
+                    android:src="@drawable/ic_action_format_list_bulleted"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
                 <TextView
                     android:id="@+id/count_items"
+                    android:gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
 

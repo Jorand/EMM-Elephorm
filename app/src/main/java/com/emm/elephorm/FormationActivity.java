@@ -2,6 +2,8 @@ package com.emm.elephorm;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -86,7 +88,7 @@ public class FormationActivity extends AppActivity {
 
     @Override
     public void onResume(){
-        Log.d("LOG", "formation onResume");
+        //Log.d("LOG", "formation onResume");
         getFormation();
         super.onResume();
 
@@ -112,7 +114,7 @@ public class FormationActivity extends AppActivity {
                 poster.setImageUrl(myFormation.getPoster(), imageLoader);
 
                 ImageView play = (ImageView) findViewById(R.id.play_image);
-                play.setAlpha((float) 0.9);
+                //play.setAlpha((float) 0.9);
 
                 TextView titre = (TextView) findViewById(R.id.title);
                 titre.setText(myFormation.getTitle());
@@ -135,12 +137,10 @@ public class FormationActivity extends AppActivity {
                 TextView duration = (TextView) findViewById(R.id.duration);
                 duration.setText(myFormation.getDuration());
 
-                List<Lesson> items = myFormation.getLessonList(0, myFormation.getItems());
+                List<Lesson> items = myFormation.getItems();
 
                 TextView countLessons = (TextView) findViewById(R.id.count_items);
                 countLessons.setText(myFormation.getVideoCount() + getString(R.string.lesson_count_label));
-
-                Log.d("LOG", "OKKKK : "+items.size());
 
                 for (int i = 0; i < items.size(); i++) {
 
@@ -148,12 +148,8 @@ public class FormationActivity extends AppActivity {
 
                     TextView item = new TextView(getApplicationContext());
 
-                    //Log.d("LOG", String.valueOf(obj.getFloor()));
-
-                    //int indent = 10 * obj.getFloor();
-
                     if (obj.getType().equals("chapter")) {
-                        item.setPadding(0, 30, 0, 10);
+                        item.setPadding(0, 40, 0, 10);
                         item.setTypeface(null, Typeface.BOLD);
                         item.setTextSize(14);
                     } else {
