@@ -72,20 +72,6 @@ public class Category {
                 (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
 
-        if(categories.size() == 0 && preferences.contains("categories")) {
-            try {
-                JSONArray list = new JSONArray(preferences.getString("categories", "[]"));
-                JSONObject obj = null;
-                for (int i = 0; i < list.length(); i++) {
-                    obj = list.getJSONObject(i);
-                    categories.add(new Category(obj));
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-
         if(update && (activeNetwork == null || !activeNetwork.isConnectedOrConnecting())) {
             callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
         } else if(update || categories.size() == 0) {
@@ -116,7 +102,25 @@ public class Category {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                        if(preferences.contains("categories")) {
+                            try {
+                                JSONArray list = new JSONArray(preferences.getString("categories", "[]"));
+                                categories.clear();
+                                JSONObject obj = null;
+                                for (int i = 0; i < list.length(); i++) {
+                                    obj = list.getJSONObject(i);
+                                    Gson gson = new Gson();
+                                    categories.add(gson.fromJson(obj.toString(), Category.class));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        if(categories.size() == 0)
+                            callback.onUpdateFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+                        else
+                            callback.onUpdateFinished(categories);
                     }
                 }
             );
@@ -160,5 +164,29 @@ public class Category {
 
     public List<Subcategory> getSubcategories() {
         return subcategories;
+    }
+
+    public static List<Category> getCategories() {
+        return categories;
+    }
+
+    public static void setCategories(List<Category> categories) {
+        Category.categories = categories;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSubcategories(List<Subcategory> subcategories) {
+        this.subcategories = subcategories;
     }
 }
