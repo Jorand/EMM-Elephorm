@@ -91,7 +91,7 @@ public class Lesson {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putBoolean(ID_KEY + id, viewed);
-        editor.commit();
+        editor.apply();
     }
 
     /** STATICS **/

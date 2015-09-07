@@ -1,11 +1,8 @@
 package com.emm.elephorm.adapters;
 
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +15,8 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
+
+import java.util.List;
 
 public class CustomListAdapter extends BaseAdapter {
     private Activity activity;

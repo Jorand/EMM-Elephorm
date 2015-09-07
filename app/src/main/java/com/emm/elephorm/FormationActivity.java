@@ -5,20 +5,16 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -32,10 +28,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class FormationActivity extends AppActivity {
-
-    VideoView video_player_view;
-    DisplayMetrics dm;
-    MediaController media_Controller;
 
     private String FormationId;
     private Formation myFormation;
@@ -86,7 +78,6 @@ public class FormationActivity extends AppActivity {
 
     @Override
     public void onResume(){
-        Log.d("LOG", "formation onResume");
         getFormation();
         super.onResume();
 
@@ -135,22 +126,16 @@ public class FormationActivity extends AppActivity {
                 TextView duration = (TextView) findViewById(R.id.duration);
                 duration.setText(myFormation.getDuration());
 
-                List<Lesson> items = myFormation.getLessonList(0, myFormation.getItems());
+                List<Lesson> items = myFormation.getItems();
 
                 TextView countLessons = (TextView) findViewById(R.id.count_items);
                 countLessons.setText(myFormation.getVideoCount() + getString(R.string.lesson_count_label));
-
-                Log.d("LOG", "OKKKK : "+items.size());
 
                 for (int i = 0; i < items.size(); i++) {
 
                     final Lesson obj = items.get(i);
 
                     TextView item = new TextView(getApplicationContext());
-
-                    //Log.d("LOG", String.valueOf(obj.getFloor()));
-
-                    //int indent = 10 * obj.getFloor();
 
                     if (obj.getType().equals("chapter")) {
                         item.setPadding(0, 30, 0, 10);
