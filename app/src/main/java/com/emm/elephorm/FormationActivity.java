@@ -2,25 +2,19 @@ package com.emm.elephorm;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v7.app.ActionBar;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -34,10 +28,6 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class FormationActivity extends AppActivity {
-
-    VideoView video_player_view;
-    DisplayMetrics dm;
-    MediaController media_Controller;
 
     private String FormationId;
     private Formation myFormation;
@@ -88,7 +78,6 @@ public class FormationActivity extends AppActivity {
 
     @Override
     public void onResume(){
-        //Log.d("LOG", "formation onResume");
         getFormation();
         super.onResume();
 
@@ -114,7 +103,7 @@ public class FormationActivity extends AppActivity {
                 poster.setImageUrl(myFormation.getPoster(), imageLoader);
 
                 ImageView play = (ImageView) findViewById(R.id.play_image);
-                //play.setAlpha((float) 0.9);
+                play.setAlpha((float) 0.9);
 
                 TextView titre = (TextView) findViewById(R.id.title);
                 titre.setText(myFormation.getTitle());
@@ -149,7 +138,7 @@ public class FormationActivity extends AppActivity {
                     TextView item = new TextView(getApplicationContext());
 
                     if (obj.getType().equals("chapter")) {
-                        item.setPadding(0, 40, 0, 10);
+                        item.setPadding(0, 30, 0, 10);
                         item.setTypeface(null, Typeface.BOLD);
                         item.setTextSize(14);
                     } else {

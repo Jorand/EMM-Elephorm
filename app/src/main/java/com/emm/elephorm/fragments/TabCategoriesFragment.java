@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +12,7 @@ import android.widget.Toast;
 
 import com.emm.elephorm.FormationsListActivity;
 import com.emm.elephorm.R;
-import com.emm.elephorm.adapters.ExpandableListAdapter;
+import com.emm.elephorm.adapters.CategoryExpandableListAdapter;
 import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Subcategory;
 
@@ -25,10 +22,10 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class TabCategoriesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private ArrayList<Category> listCategories = new ArrayList<>();
-    private ExpandableListAdapter listAdapter;
+    private CategoryExpandableListAdapter listAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
@@ -38,7 +35,7 @@ public class TabFragment2 extends Fragment implements SwipeRefreshLayout.OnRefre
 
         // INIT EXPENDABLELIST
         ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
-        listAdapter = new ExpandableListAdapter(v.getContext(), listCategories);
+        listAdapter = new CategoryExpandableListAdapter(v.getContext(), listCategories);
         expListView.setAdapter(listAdapter);
         //expListView.setDivider(null);
 

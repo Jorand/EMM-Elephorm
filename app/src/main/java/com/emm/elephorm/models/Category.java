@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -13,7 +12,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,15 +20,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Inikaam on 12/08/2015.
- */
 public class Category {
-    public static List<Category> categories = new ArrayList<Category>();
+    public static List<Category> categories = new ArrayList<>();
     protected String id;
     protected String title;
     protected String description;
-    protected List<Subcategory> subcategories = new ArrayList<Subcategory>();
+    protected List<Subcategory> subcategories = new ArrayList<>();
 
     /**
      * Initialise la catégorie avec un objet JSON
@@ -43,7 +38,7 @@ public class Category {
             title = data.getString("title");
             description = data.getString("description");
             JSONArray subs = new JSONArray(data.getString("subcategories"));
-            JSONObject obj = null;
+            JSONObject obj;
             for(int i = 0;i < subs.length();i++) {
                 obj = subs.getJSONObject(i);
                 subcategories.add(new Subcategory(obj));
@@ -80,7 +75,7 @@ public class Category {
                     @Override
                     public void onResponse(JSONArray response) {
                         categories.clear();
-                        JSONObject obj = null;
+                        JSONObject obj;
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 obj = response.getJSONObject(i);
@@ -94,7 +89,7 @@ public class Category {
                         Gson gson = new Gson();
                         editor.putString("categories", gson.toJson(categories));
 
-                        editor.commit();
+                        editor.apply();
 
                         callback.onUpdateFinished(categories);
                     }
@@ -106,7 +101,7 @@ public class Category {
                             try {
                                 JSONArray list = new JSONArray(preferences.getString("categories", "[]"));
                                 categories.clear();
-                                JSONObject obj = null;
+                                JSONObject obj;
                                 for (int i = 0; i < list.length(); i++) {
                                     obj = list.getJSONObject(i);
                                     Gson gson = new Gson();
@@ -128,24 +123,6 @@ public class Category {
         } else {
             callback.onUpdateFinished(categories);
         }
-    }
-
-    public static Category getCategory(String id) {
-        Category category = null;
-        for(int i = 0;i<categories.size();i++) {
-            if(categories.get(i).getId().equals(id))
-                category = categories.get(i);
-        }
-        return category;
-    }
-
-    public Subcategory getSubcategory(String id) {
-        Subcategory subcategory = null;
-        for(int i = 0;i<subcategories.size();i++) {
-            if(subcategories.get(i).getId().equals(id))
-                subcategory = subcategories.get(i);
-        }
-        return subcategory;
     }
 
     /** Getters **/

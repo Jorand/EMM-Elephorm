@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -13,7 +12,6 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
-import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,17 +102,9 @@ public class Formation {
                 updateProgress();
             }
 
-
-            //progress = 0; // TODO : Aller chercher le progrès dans l'historique
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
-    }
-
-    public String toJson() {
-        Gson gson = new Gson();
-        return gson.toJson(this);
     }
 
     //define callback interface
@@ -211,7 +201,6 @@ public class Formation {
      * Met à jour l'avancement dans la formation
      */
     public void updateProgress() {
-        final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
         int count = countViewedLessons(items);
 
         progress = ((float) count/(float) videoCount) * 100;
@@ -246,7 +235,7 @@ public class Formation {
             SharedPreferences.Editor editor = preferences.edit();
 
             editor.putString(listName, listString);
-            editor.commit();
+            editor.apply();
         }
     }
 
@@ -266,7 +255,7 @@ public class Formation {
         SharedPreferences.Editor editor = preferences.edit();
 
         editor.putString(listName, listString);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -286,19 +275,6 @@ public class Formation {
         return count;
     }
 
-    public List<Lesson> getLessonList(int floor, List<Lesson> lessons) {
-        List<Lesson> lessonList = new ArrayList<>();
-
-        for(int i = 0;i<lessons.size();i++) {
-            lessonList.add(lessons.get(i));
-            lessonList.get(i).setFloor(floor);
-            if(lessons.get(i).getItems().size() > 0)
-                lessonList.addAll(getLessonList((floor + 1), lessons.get(i).getItems()));
-        }
-
-        return lessonList;
-    }
-
     /**
      * Renvoie la publishedDate au format dd/mm/yyyy
      * @return string
@@ -314,14 +290,6 @@ public class Formation {
             e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * Calcule la valeur de pourcentage de chaque leçon
-     * @return valeur d'une leçon
-     */
-    protected double lessonPercentValue() {
-        return (double) 0;
     }
 
     /**

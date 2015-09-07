@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
 import com.emm.elephorm.R;
-import com.emm.elephorm.adapters.CustomListAdapter;
+import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
 
@@ -27,12 +27,12 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private View v;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout mEmptyViewContainer;
-    private CustomListAdapter listAdapter;
+    private FormationListAdapter listAdapter;
     private List<Formation> formationList = new ArrayList<>();
 
     private List<Formation> currentFormationList = new ArrayList<>();
@@ -54,7 +54,7 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
         // INIT LISTVIEW
         listView = (ListView) v.findViewById(R.id.list);
         listView.setEmptyView(mEmptyViewContainer);
-        listAdapter = new CustomListAdapter(getActivity(), formationList);
+        listAdapter = new FormationListAdapter(getActivity(), formationList);
         listView.setAdapter(listAdapter);
 
         // EVENT LISTVIEW

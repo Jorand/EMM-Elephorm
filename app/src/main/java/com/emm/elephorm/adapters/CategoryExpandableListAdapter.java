@@ -12,12 +12,12 @@ import com.emm.elephorm.models.Category;
 
 import java.util.ArrayList;
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class CategoryExpandableListAdapter extends BaseExpandableListAdapter {
 
     private Context _context;
     private ArrayList<Category> mListCategorie;
 
-    public ExpandableListAdapter(Context context, ArrayList<Category> listCategorie) {
+    public CategoryExpandableListAdapter(Context context, ArrayList<Category> listCategorie) {
 
         this._context = context;
         this.mListCategorie = listCategorie;

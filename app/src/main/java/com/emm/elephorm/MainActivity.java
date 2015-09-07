@@ -2,27 +2,18 @@ package com.emm.elephorm;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
-import com.emm.elephorm.adapters.PagerAdapter;
-import com.emm.elephorm.models.Category;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.emm.elephorm.adapters.TabAdapter;
 
 public class MainActivity extends AppActivity {
-
-    protected List<Category> categories = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +21,6 @@ public class MainActivity extends AppActivity {
         setContentView(R.layout.activity_main);
 
         initTabBar();
-        /*
-        Category.getCategoryList(true, new Category.updateCallback() {
-            @Override
-            public void onUpdateFinished(List<Category> cats) {
-                categories = cats;
-            }
-        });
-        */
     }
 
     @Override
@@ -77,7 +60,7 @@ public class MainActivity extends AppActivity {
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter
+        final TabAdapter adapter = new TabAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
 

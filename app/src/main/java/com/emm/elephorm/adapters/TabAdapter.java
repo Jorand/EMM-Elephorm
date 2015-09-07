@@ -4,14 +4,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.emm.elephorm.fragments.TabFragment1;
-import com.emm.elephorm.fragments.TabFragment2;
-import com.emm.elephorm.fragments.TabFragment3;
+import com.emm.elephorm.fragments.TabCategoriesFragment;
+import com.emm.elephorm.fragments.TabHistoryFragment;
+import com.emm.elephorm.fragments.TabHomeFragment;
 
-public class PagerAdapter extends FragmentStatePagerAdapter {
+public class TabAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
 
-    public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+    public TabAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
     }
@@ -21,11 +21,11 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return new TabFragment1();
+                return new TabHomeFragment();
             case 1:
-                return new TabFragment2();
+                return new TabCategoriesFragment();
             case 2:
-                return new TabFragment3();
+                return new TabHistoryFragment();
             default:
                 return null;
         }

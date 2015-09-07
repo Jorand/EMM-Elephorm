@@ -1,11 +1,8 @@
 package com.emm.elephorm.adapters;
 
 
-import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,13 +16,15 @@ import com.emm.elephorm.R;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
 
-public class CustomListAdapter extends BaseAdapter {
+import java.util.List;
+
+public class FormationListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Formation> formationItems;
     ImageLoader imageLoader = ElephormApp.getInstance().getImageLoader();
 
-    public CustomListAdapter(Activity activity, List<Formation> formationItems) {
+    public FormationListAdapter(Activity activity, List<Formation> formationItems) {
         this.activity = activity;
         this.formationItems = formationItems;
     }
