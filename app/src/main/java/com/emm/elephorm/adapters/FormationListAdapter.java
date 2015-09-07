@@ -18,13 +18,13 @@ import com.emm.elephorm.models.Formation;
 
 import java.util.List;
 
-public class CustomListAdapter extends BaseAdapter {
+public class FormationListAdapter extends BaseAdapter {
     private Activity activity;
     private LayoutInflater inflater;
     private List<Formation> formationItems;
     ImageLoader imageLoader = ElephormApp.getInstance().getImageLoader();
 
-    public CustomListAdapter(Activity activity, List<Formation> formationItems) {
+    public FormationListAdapter(Activity activity, List<Formation> formationItems) {
         this.activity = activity;
         this.formationItems = formationItems;
     }

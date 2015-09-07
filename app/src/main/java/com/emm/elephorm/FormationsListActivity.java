@@ -10,7 +10,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.emm.elephorm.adapters.CustomListAdapter;
+import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.models.Formation;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
-    private CustomListAdapter listAdapter;
+    private FormationListAdapter listAdapter;
     private String SubcategoryId;
     private List<Formation> formationList = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
         //View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
         //listView.addHeaderView(headerView);
 
-        listAdapter = new CustomListAdapter(this, formationList);
+        listAdapter = new FormationListAdapter(this, formationList);
         listView.setAdapter(listAdapter);
 
         // LISTVIEW EVENTS
