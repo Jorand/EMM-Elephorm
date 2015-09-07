@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
@@ -77,6 +79,7 @@ public class TabFragment3 extends Fragment implements SwipeRefreshLayout.OnRefre
                 Intent intent = new Intent(getActivity(), FormationActivity.class);
                 String formationId = formation.getEan();
                 intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
                 startActivity(intent);
             }
         });

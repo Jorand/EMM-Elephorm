@@ -66,6 +66,7 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
                 Intent intent = new Intent(FormationsListActivity.this, FormationActivity.class);
                 String formationId = formation.getEan();
                 intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
                 startActivity(intent);
             }
         });
@@ -117,7 +118,7 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
             @Override
             public void onGetFail(String error) {
                 swipeRefreshLayout.setRefreshing(false);
-                Toast toast = Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), error, Toast.LENGTH_SHORT);
                 toast.show();
             }
         });

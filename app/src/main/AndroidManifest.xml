@@ -47,7 +47,7 @@
             android:name=".VideoActivity"
             android:label="@string/title_activity_video"
             android:launchMode="singleTask"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen"
             android:screenOrientation="landscape" >
         </activity>
     </application>

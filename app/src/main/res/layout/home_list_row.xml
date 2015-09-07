@@ -33,9 +33,9 @@
         android:ellipsize="end"
         android:maxLines="2"/>
 
-    <!-- Description -->
+    <!-- Subtitle -->
     <TextView
-        android:id="@+id/desc"
+        android:id="@+id/subtitle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
@@ -47,19 +47,19 @@
         android:ellipsize="end"
         android:maxLines="1"/>
 
-    <!-- Categories-->
-    <TextView
+
+    <ProgressBar
         android:id="@+id/progress"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/desc"
-        android:layout_marginTop="-2dp"
+        android:layout_below="@id/subtitle"
+        android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/thumbnail"
         android:layout_toEndOf="@+id/thumbnail"
-        android:textColor="@color/ColorGey"
-        android:textSize="@dimen/rowCategory"
-        android:ellipsize="end"
-        android:maxLines="1"/>
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:progressDrawable="@drawable/custom_progressbar"
+        android:progress="0"
+        android:max="100" />
 
 
 </RelativeLayout>

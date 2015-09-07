@@ -1,38 +1,33 @@
 package com.emm.elephorm;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
-import android.support.annotation.RequiresPermission;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SurfaceView;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.MediaController;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
-import com.emm.elephorm.adapters.CustomListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
 import com.emm.elephorm.models.Lesson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class FormationActivity extends AppActivity {
@@ -45,11 +40,20 @@ public class FormationActivity extends AppActivity {
     private Formation myFormation;
 
     ImageLoader imageLoader = ElephormApp.getInstance().getImageLoader();
+    private ProgressBar progress;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formation);
+
+        Intent intent = getIntent();
+        FormationId = intent.getStringExtra("EXTRA_FORMATION_ID");
+        String FormationTitle = intent.getStringExtra("EXTRA_FORMATION_TITLE");
+
+        if (FormationTitle.isEmpty())
+            FormationTitle = "Formation";
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -59,15 +63,14 @@ public class FormationActivity extends AppActivity {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
 
-            actionBar.setTitle("Formation");
+            actionBar.setTitle(FormationTitle);
         }
 
-        Intent intent = getIntent();
-        FormationId = intent.getStringExtra("EXTRA_FORMATION_ID");
+        progress = (ProgressBar) findViewById(R.id.progress);
+        Drawable draw = getDrawable(R.drawable.custom_progressbar);
+        progress.setProgressDrawable(draw);
 
         getFormation();
-
-        //getInit();
 
         NetworkImageView poster = (NetworkImageView) findViewById(R.id.poster);
         poster.setOnClickListener(new View.OnClickListener() {
@@ -84,23 +87,10 @@ public class FormationActivity extends AppActivity {
 
     @Override
     public void onResume(){
+        Log.d("LOG", "formation onResume");
         getFormation();
         super.onResume();
 
-    }
-
-    public void getInit() {
-        //video_player_view = (VideoView) findViewById(R.id.video_player_view);
-        media_Controller = new MediaController(this);
-        dm = new DisplayMetrics();
-        this.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int height = dm.heightPixels;
-        int width = dm.widthPixels;
-        video_player_view.setMinimumWidth(width);
-        //video_player_view.setMinimumHeight(height);
-        video_player_view.setMediaController(media_Controller);
-        video_player_view.setVideoPath("http://eas.elephorm.com/videos/tuto-cubase-7-les-nouveautes/presentation-de-cubase-7");
-        video_player_view.start();
     }
 
     private void getFormation() {
@@ -134,9 +124,13 @@ public class FormationActivity extends AppActivity {
                 TextView duration = (TextView) findViewById(R.id.duration);
                 duration.setText(myFormation.getDuration());
 
-                List<Lesson> itemsff = myFormation.getItems();
-
                 List<Lesson> items = myFormation.getLessonList(0, myFormation.getItems());
+
+                TextView countLessons = (TextView) findViewById(R.id.count_items);
+                countLessons.setText(items.size() +" leçons");
+
+                int viewedVideo = 0;
+                int video = 0;
 
                 for (int i = 0; i < items.size(); i++) {
 
@@ -144,24 +138,40 @@ public class FormationActivity extends AppActivity {
 
                     TextView item = new TextView(getApplicationContext());
 
+                    //Log.d("LOG", String.valueOf(obj.getFloor()));
+
+                    //int indent = 10 * obj.getFloor();
+
+                    if (obj.getType().equals("chapter")) {
+                        item.setPadding(0, 30, 0, 10);
+                        item.setTypeface(null, Typeface.BOLD);
+                        item.setTextSize(14);
+                    }
+                    else {
+                        item.setPadding(30, 16, 0, 16);
+                    }
+
+                    item.setTextColor(getResources().getColor(R.color.ColorTxt));
+
                     if (obj.getType().equals("video")) {
 
+                        item.setText(obj.getTitle());
+                        item.setClickable(true);
+                        //item.setFocusableInTouchMode(true);
+                        item.setBackgroundResource(R.drawable.label_bg);
+
                         if (obj.isViewed()) {
-                            item.setText("Visioné - "+obj.getTitle());
+                            item.setTextColor(getResources().getColor(R.color.ColorGey));
+
+                            viewedVideo++;
                         }
-                        else {
-                            item.setText("Video - "+obj.getTitle());
-                        }
+
+                        video++;
 
                     }
                     else {
                         item.setText(obj.getTitle());
                     }
-
-                    int indent = 10 * obj.getFloor();
-
-                    item.setPadding(indent, 10, 10, 10);
-                    item.setTextColor(getResources().getColor(R.color.primary_dark_material_dark));
 
                     LinearLayout layout = (LinearLayout) findViewById(R.id.layout);
                     layout.addView(item);
@@ -185,15 +195,13 @@ public class FormationActivity extends AppActivity {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                //intent.putExtra("url", url);
-                                //startActivity(intent);
                             }
                             else {
 
-                                Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
-                                String id = obj.getId();
-                                intent.putExtra("EXTRA_LESSON_ID", id);
-                                startActivity(intent);
+                                //Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
+                                //String id = obj.getId();
+                                //intent.putExtra("EXTRA_LESSON_ID", id);
+                                //startActivity(intent);
                             }
 
                         }
@@ -202,13 +210,19 @@ public class FormationActivity extends AppActivity {
 
                 }
 
+                progress.setProgress(Math.round(myFormation.getProgress()));
+                TextView progressText = (TextView) findViewById(R.id.progress_text);
+
+                progressText.setText(viewedVideo+"/"+video+" ("+Math.round(myFormation.getProgress())+"%)");
+
+
 
             }
 
             @Override
             public void onGetFail(String error) {
 
-                Toast toast = Toast.makeText(getApplicationContext(), "ERREUR", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG);
                 toast.show();
             }
         });

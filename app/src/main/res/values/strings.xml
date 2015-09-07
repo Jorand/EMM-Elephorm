@@ -4,9 +4,9 @@
 
      <string name="action_settings">Supprimer les données enregister</string>
 
-    <string name="tab_title_1">Home</string>
-    <string name="tab_title_2">Tous les cours</string>
-    <string name="tab_title_3">Mes cours</string>
+    <string name="tab_title_1">Elephorm</string>
+    <string name="tab_title_2">Catégories</string>
+    <string name="tab_title_3">Formations suivies</string>
 
     <string name="title_activity_formations">FormationsActivity</string>
 
@@ -22,5 +22,7 @@
     <string name="title_activity_lessons">LessonsActivity</string>
     <string name="home_empty_text">Il n\'y a pas de nouvelles vidéos pour le moment !</string>
     <string name="tab3_empty_text">Votre historique est vide !</string>
+    <string name="description_label">Description</string>
+    <string name="price_label">Prix :</string>
 
 </resources>

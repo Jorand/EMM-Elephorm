@@ -7,6 +7,10 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +62,11 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
         listAdapter = new CustomListAdapter(getActivity(), formationList);
         listView.setAdapter(listAdapter);
 
+        //ViewGroup header = (ViewGroup)inflater.inflate(R.layout.list_header, listView, false);
+        //TextView headerTitle = (TextView) header.findViewById(R.id.headerTitle);
+        //headerTitle.setText("Nouveautés");
+        //listView.addHeaderView(header, null, false);
+
         // LISTVIEW EVENT
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -66,6 +75,7 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
                 Intent intent = new Intent(getActivity(), FormationActivity.class);
                 String formationId = formation.getEan();
                 intent.putExtra("EXTRA_FORMATION_ID", formationId);
+                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
                 startActivity(intent);
             }
         });

@@ -11,13 +11,16 @@ import android.widget.VideoView;
 
 public class VideoActivity extends Activity implements MediaPlayer.OnCompletionListener {
 
+    private VideoView v;
+    private int stopPosition;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_video);
 
-        VideoView v = (VideoView) findViewById(R.id.myvideoview);
+        v = (VideoView) findViewById(R.id.myvideoview);
 
         String url = null;
         if (getIntent().getExtras() != null) {
@@ -39,6 +42,20 @@ public class VideoActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onCompletion(MediaPlayer v) {
         finish();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopPosition = v.getCurrentPosition();
+        v.pause();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        //v.seekTo(stopPosition);
+        //v.start();
+        v.resume();
     }
 
 }

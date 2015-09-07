@@ -5,10 +5,12 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -57,8 +59,8 @@ public class CustomListAdapter extends BaseAdapter {
         NetworkImageView thumbNail = (NetworkImageView) convertView
                 .findViewById(R.id.thumbnail);
         TextView title = (TextView) convertView.findViewById(R.id.title);
-        TextView desc = (TextView) convertView.findViewById(R.id.desc);
-        TextView progress = (TextView) convertView.findViewById(R.id.progress);
+        TextView desc = (TextView) convertView.findViewById(R.id.subtitle);
+        //TextView date = (TextView) convertView.findViewById(R.id.date);
 
         // getting movie data for the row
         Formation f = formationItems.get(position);
@@ -71,10 +73,21 @@ public class CustomListAdapter extends BaseAdapter {
 
         // Desc
         //desc.setText(Html.fromHtml(f.getTeaserText())); // HTML
-        desc.setText(f.getPublishedDate());
+        desc.setText(f.getSubtitle());
 
-        // category
-        progress.setText(String.valueOf(f.getProgress()));
+        // date
+        //date.setText(f.getPublishedDate());
+
+
+        // progress
+        ProgressBar progress = (ProgressBar) convertView.findViewById(R.id.progress);
+
+        if (f.getProgress() > 0) {
+            progress.setProgress(Math.round(f.getProgress()));
+        }
+        else {
+            progress.setVisibility(View.GONE);
+        }
 
         return convertView;
     }
