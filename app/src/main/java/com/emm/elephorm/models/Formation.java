@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -45,8 +46,10 @@ public class Formation {
     protected String prerequisites;
     protected String productUrl;
     protected String qcmUrl;
-    protected String category;
-    protected String subcategory;
+    protected String categoryId;
+    protected String categoryName;
+    protected String subcategoryId;
+    protected String subcategoryName;
     protected double rating;
     protected String publishedDate;
     protected String poster;
@@ -68,8 +71,6 @@ public class Formation {
             prerequisites   = data.getString("prerequisites");
             qcmUrl          = data.getString("qcm");
             teaserText      = data.getString("teaser_text");
-            category        = data.getString("category");
-            subcategory     = data.getString("subcategory");
             teaser          = data.getString("teaser");
             poster          = data.getString("poster");
             free            = Boolean.parseBoolean(data.getString("free"));
@@ -78,8 +79,16 @@ public class Formation {
             publishedDate   = data.getString("publishedDate");
             ean             = data.getString("ean13");
 
-            JSONObject ratingObj = new JSONObject(data.getString("rating"));
-            rating = !ratingObj.getString("average").equals("null") ? Double.parseDouble(ratingObj.getString("average")) : 0;
+            JSONObject tempObj = new JSONObject(data.getString("rating"));
+            rating = !tempObj.getString("average").equals("null") ? Double.parseDouble(tempObj.getString("average")) : 0;
+
+            tempObj = new JSONObject(data.getString("category"));
+            categoryId = tempObj.getString("_id");
+            categoryName = tempObj.getString("title");
+
+            tempObj = new JSONObject(data.getString("subcategory"));
+            subcategoryId = tempObj.getString("_id");
+            subcategoryName = tempObj.getString("title");
 
             // Gestion des items
             if(data.has("items")) {
@@ -202,7 +211,7 @@ public class Formation {
         progress = ((float) count/(float) videoCount) * 100;
 
         if(progress > 0) {
-            addIdFromList("recommended_categories", subcategory);
+            addIdFromList("recommended_categories", subcategoryId);
             if(progress < 100) {
                 addIdFromList("current_formations", ean);
             } else {
@@ -418,12 +427,12 @@ public class Formation {
         return qcmUrl;
     }
 
-    public String getCategory() {
-        return category;
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public String getSubcategory() {
-        return subcategory;
+    public String getSubcategoryId() {
+        return subcategoryId;
     }
 
     public double getRating() {
@@ -456,5 +465,13 @@ public class Formation {
 
     public String getEan() {
         return ean;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public String getSubcategoryName() {
+        return subcategoryName;
     }
 }
