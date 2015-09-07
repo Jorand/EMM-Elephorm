@@ -341,8 +341,8 @@ public class Formation {
         int m = (duration % 3600) / 60;
         int s = (duration % 3600) % 60;
 
-        return timeItemToString(h) + ":"
-                    + timeItemToString(m) + ":"
+        return h + "h"
+                    + timeItemToString(m) + "m"
                     + timeItemToString(s);
     }
 
