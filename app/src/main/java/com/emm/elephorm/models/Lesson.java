@@ -2,7 +2,6 @@ package com.emm.elephorm.models;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.emm.elephorm.app.ElephormApp;
 
@@ -12,11 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-/**
- * Created by Inikaam on 11/08/2015.
- */
 public class Lesson {
     protected String id;
     protected String type;
@@ -26,8 +21,7 @@ public class Lesson {
     protected String poster;
     protected boolean free;
     protected boolean viewed;
-    protected List<Lesson> items = new ArrayList<Lesson>();
-    protected int floor;
+    protected List<Lesson> items = new ArrayList<>();
     private static final String ID_KEY = "LESSON_";
 
     public Lesson(JSONObject data) {
@@ -103,7 +97,7 @@ public class Lesson {
     /** STATICS **/
 
     public static List<Lesson> getLessonList(JSONArray data) {
-        List<Lesson> lessons = new ArrayList<Lesson>();
+        List<Lesson> lessons = new ArrayList<>();
         for(int i = 0;i<data.length();i++) {
             try {
                 lessons.add(new Lesson(data.getJSONObject(i)));
@@ -152,11 +146,4 @@ public class Lesson {
         return items;
     }
 
-    public int getFloor() {
-        return floor;
-    }
-
-    public void setFloor(int floor) {
-        this.floor = floor;
-    }
 }
