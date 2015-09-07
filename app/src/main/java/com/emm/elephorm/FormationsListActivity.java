@@ -22,7 +22,7 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView listView;
     private FormationListAdapter listAdapter;
-    private String SubcategoryId;
+    private String subcategoryId;
     private List<Formation> formationList = new ArrayList<>();
 
     @Override
@@ -37,14 +37,14 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
 
         // GET EXTRA
         Intent intent = getIntent();
-        SubcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
-        String SubcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
+        subcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
+        String subcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
 
         // SET TOOLBAR TITLE
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(SubcategoryTitle);
+            actionBar.setTitle(subcategoryTitle);
         }
 
         // INIT LISTVIEW
@@ -92,11 +92,11 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
     }
 
     private void getListFormations() {
-        //Log.d("LOG", "update : "+SubcategoryId);
+        //Log.d("LOG", "update : "+subcategoryId);
 
         formationList.clear(); // Clear list
 
-        Formation.getSubcategoryFormations(SubcategoryId, new Formation.getFormationListCallback() {
+        Formation.getSubcategoryFormations(subcategoryId, new Formation.getFormationListCallback() {
             @Override
             public void onGetFinished(List<Formation> formations) {
 
