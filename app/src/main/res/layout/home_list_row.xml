@@ -36,7 +36,7 @@
     <!-- Subtitle -->
     <TextView
         android:id="@+id/subtitle"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_marginTop="-3dp"
@@ -46,7 +46,6 @@
         android:textColor="@color/ColorGey"
         android:ellipsize="end"
         android:maxLines="1"/>
-
 
     <ProgressBar
         android:id="@+id/progress"

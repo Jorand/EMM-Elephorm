@@ -44,7 +44,8 @@
                 android:textColor="@color/ColorTitle"
                 android:textSize="18sp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/subtitle"
@@ -52,6 +53,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="7dp"/>
+
+            <TextView
+                android:id="@+id/category"
+                android:textColor="@color/ColorTxt"
+                android:layout_marginBottom="7dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:orientation="horizontal"
@@ -85,27 +93,6 @@
                     android:layout_alignParentEnd="true"/>
 
             </RelativeLayout>
-
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/category"
-                    android:text="Cat:"
-                    android:textColor="@color/ColorTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <TextView
-                    android:id="@+id/subcategory"
-                    android:text="SUB"
-                    android:textColor="@color/ColorTxt"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-            </LinearLayout>
 
             <TextView
                 android:id="@+id/description_label"
@@ -160,6 +147,15 @@
                     android:layout_height="wrap_content" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/items_label"
+                android:textColor="@color/ColorTxt"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/items_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
             <LinearLayout
                 android:id="@+id/items"

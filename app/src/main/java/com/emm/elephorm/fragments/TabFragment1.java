@@ -140,53 +140,45 @@ public class TabFragment1 extends Fragment implements SwipeRefreshLayout.OnRefre
 
         if (list.length > 1) {
 
-            for (String aList : list) {
+            for (String id : list) {
 
-                try {
-                    JSONObject video = new JSONObject(aList);
-                    final String id = video.getString("_id");
-                    //Log.d("LOG", id);
+                Log.d("LOG", id);
 
-                    if (!id.isEmpty()) {
+                if (!id.isEmpty()) {
 
-                        mEmptyViewContainer.setVisibility(View.GONE);
-                        swipeRefreshLayout.setRefreshing(true);
-                        mEmptyViewContainer.setRefreshing(true);
+                    mEmptyViewContainer.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(true);
+                    mEmptyViewContainer.setRefreshing(true);
 
-                        Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
-                            @Override
-                            public void onGetFinished(List<Formation> formations) {
-                                //Log.d("LOG", "out : " + id);
+                    Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
+                        @Override
+                        public void onGetFinished(List<Formation> formations) {
+                            //Log.d("LOG", "out : " + id);
 
-                                for (int i = 0; i < formations.size(); i++) {
+                            for (int i = 0; i < formations.size(); i++) {
 
-                                    Formation obj = formations.get(i);
+                                Formation obj = formations.get(i);
 
-                                    if (obj.getProgress() <= 0) {
-                                        formationList.add(obj);
-                                    }
+                                if (obj.getProgress() <= 0) {
+                                    formationList.add(obj);
                                 }
-
-                                updateAdapter(listLength);
                             }
 
-                            @Override
-                            public void onGetFail(String error) {
+                            updateAdapter(listLength);
+                        }
 
-                                updateAdapter(listLength);
+                        @Override
+                        public void onGetFail(String error) {
 
-                                Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
-                                toast.show();
+                            updateAdapter(listLength);
 
-                            }
-                        });
+                            Toast toast = Toast.makeText(getActivity(), error, Toast.LENGTH_SHORT);
+                            toast.show();
 
-                    } else {
-                        updateAdapter(listLength);
-                    }
+                        }
+                    });
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                } else {
                     updateAdapter(listLength);
                 }
             }

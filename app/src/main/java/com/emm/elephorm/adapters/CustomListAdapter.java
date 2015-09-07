@@ -56,11 +56,9 @@ public class CustomListAdapter extends BaseAdapter {
 
         if (imageLoader == null)
             imageLoader = ElephormApp.getInstance().getImageLoader();
-        NetworkImageView thumbNail = (NetworkImageView) convertView
-                .findViewById(R.id.thumbnail);
+        NetworkImageView thumbNail = (NetworkImageView) convertView.findViewById(R.id.thumbnail);
         TextView title = (TextView) convertView.findViewById(R.id.title);
-        TextView desc = (TextView) convertView.findViewById(R.id.subtitle);
-        //TextView date = (TextView) convertView.findViewById(R.id.date);
+        TextView subTitle = (TextView) convertView.findViewById(R.id.subtitle);
 
         // getting movie data for the row
         Formation f = formationItems.get(position);
@@ -73,11 +71,10 @@ public class CustomListAdapter extends BaseAdapter {
 
         // Desc
         //desc.setText(Html.fromHtml(f.getTeaserText())); // HTML
-        desc.setText(f.getSubtitle());
+        subTitle.setText(f.getSubtitle());
 
-        // date
-        //date.setText(f.getPublishedDate());
-
+        if (f.getSubtitle().isEmpty())
+            subTitle.setVisibility(View.GONE);
 
         // progress
         ProgressBar progress = (ProgressBar) convertView.findViewById(R.id.progress);

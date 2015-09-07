@@ -24,5 +24,7 @@
     <string name="tab3_empty_text">Votre historique est vide !</string>
     <string name="description_label">Description</string>
     <string name="price_label">Prix :</string>
+    <string name="items_label">Sommaire :</string>
+    <string name="lesson_count_label">" leçons"</string>
 
 </resources>

@@ -120,6 +120,12 @@ public class FormationActivity extends AppActivity {
                 TextView subTitle = (TextView) findViewById(R.id.subtitle);
                 subTitle.setText(myFormation.getSubtitle());
 
+                if (myFormation.getSubtitle().isEmpty())
+                    subTitle.setVisibility(View.GONE);
+
+                TextView category = (TextView) findViewById(R.id.category);
+                category.setText(myFormation.getCategoryName()+" / "+myFormation.getSubcategoryName());
+
                 TextView description = (TextView) findViewById(R.id.description);
                 description.setText(Html.fromHtml(myFormation.getDescription()));
 
@@ -132,10 +138,9 @@ public class FormationActivity extends AppActivity {
                 List<Lesson> items = myFormation.getLessonList(0, myFormation.getItems());
 
                 TextView countLessons = (TextView) findViewById(R.id.count_items);
-                countLessons.setText(items.size() +" leçons");
+                countLessons.setText(myFormation.getVideoCount() + getString(R.string.lesson_count_label));
 
                 int viewedVideo = 0;
-                int video = 0;
 
                 for (int i = 0; i < items.size(); i++) {
 
@@ -151,9 +156,8 @@ public class FormationActivity extends AppActivity {
                         item.setPadding(0, 30, 0, 10);
                         item.setTypeface(null, Typeface.BOLD);
                         item.setTextSize(14);
-                    }
-                    else {
-                        item.setPadding(30, 16, 0, 16);
+                    } else {
+                        item.setPadding(30, 20, 0, 20);
                     }
 
                     item.setTextColor(getResources().getColor(R.color.ColorTxt));
@@ -171,10 +175,7 @@ public class FormationActivity extends AppActivity {
                             viewedVideo++;
                         }
 
-                        video++;
-
-                    }
-                    else {
+                    } else {
                         item.setText(obj.getTitle());
                     }
 
@@ -201,14 +202,6 @@ public class FormationActivity extends AppActivity {
                                     e.printStackTrace();
                                 }
                             }
-                            else {
-
-                                //Intent intent = new Intent(FormationActivity.this, LessonsActivity.class);
-                                //String id = obj.getId();
-                                //intent.putExtra("EXTRA_LESSON_ID", id);
-                                //startActivity(intent);
-                            }
-
                         }
 
                     });
@@ -218,9 +211,7 @@ public class FormationActivity extends AppActivity {
                 progress.setProgress(Math.round(myFormation.getProgress()));
                 TextView progressText = (TextView) findViewById(R.id.progress_text);
 
-                progressText.setText(viewedVideo+"/"+video+" ("+Math.round(myFormation.getProgress())+"%)");
-
-
+                progressText.setText(myFormation.countViewedLessons(myFormation.getItems())+"/"+myFormation.getVideoCount()+" ("+Math.round(myFormation.getProgress())+"%)");
 
             }
 

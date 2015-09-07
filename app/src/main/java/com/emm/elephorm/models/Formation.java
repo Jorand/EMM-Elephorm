@@ -268,7 +268,7 @@ public class Formation {
      * /!\ Récursive
      * @return
      */
-    protected int countViewedLessons(List<Lesson> lessons) {
+    public int countViewedLessons(List<Lesson> lessons) {
         int count = 0;
         for(int i = 0;i<lessons.size();i++) {
             if(lessons.get(i).viewed)
