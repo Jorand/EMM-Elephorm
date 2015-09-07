@@ -42,7 +42,7 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_tab_fragment3, container, false);
+        v = inflater.inflate(R.layout.fragment_tab_history, container, false);
 
         // SWIPE REFRESH
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);

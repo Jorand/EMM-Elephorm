@@ -37,7 +37,7 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_tab_fragment1, container, false);
+        v = inflater.inflate(R.layout.fragment_tab_home, container, false);
 
         // SWIPE REFRESH
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);

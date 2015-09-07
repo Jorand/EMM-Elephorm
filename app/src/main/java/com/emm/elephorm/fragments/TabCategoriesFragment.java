@@ -31,7 +31,7 @@ public class TabCategoriesFragment extends Fragment implements SwipeRefreshLayou
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_tab_fragment2, container, false);
+        View v = inflater.inflate(R.layout.fragment_tab_categories, container, false);
 
         // INIT EXPENDABLELIST
         ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
