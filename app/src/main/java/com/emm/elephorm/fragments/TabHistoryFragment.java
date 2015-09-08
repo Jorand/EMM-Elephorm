@@ -134,6 +134,8 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
 
         if (current >= lengh) {
 
+            titleLists.clear();
+
             if (currentFormationList.size() > 0) {
                 TitleList newsList = new TitleList("En cours", currentFormationList);
                 titleLists.add(newsList);
@@ -169,8 +171,6 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
 
     private void getFormations(String key) {
         //Log.d("LOG", "getFormations "+key);
-
-        titleLists.clear();
 
         final String listType = key;
 
