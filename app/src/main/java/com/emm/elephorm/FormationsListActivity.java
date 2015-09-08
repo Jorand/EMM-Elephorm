@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -95,6 +96,8 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
         //Log.d("LOG", "update : "+subcategoryId);
 
         formationList.clear(); // Clear list
+
+        Log.d("LOG", subcategoryId);
 
         Formation.getSubcategoryFormations(subcategoryId, new Formation.getFormationListCallback() {
             @Override

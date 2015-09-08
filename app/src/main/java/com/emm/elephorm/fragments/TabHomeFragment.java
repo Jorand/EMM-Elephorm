@@ -33,6 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,6 +50,8 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private ArrayList<TitleList> titleLists = new ArrayList<>();
 
     ArrayList<Formation> firstFormations = new ArrayList<>();
+    ArrayList<Formation> newFormations = new ArrayList<>();
+    ArrayList<Formation> newFirstFormations = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -143,16 +146,38 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         if (current >= lengh) {
 
+            newFirstFormations.clear();
+
+            titleLists.clear();
+
+            if (newFormations.size() > 0) {
+
+                newFirstFormations.add(newFormations.get(1));
+                newFirstFormations.add(newFormations.get(2));
+                newFirstFormations.add(newFormations.get(3));
+
+                TitleList newsList = new TitleList("Nouveautés", newFirstFormations);
+                titleLists.add(newsList);
+            }
+
             firstFormations.clear();
 
             if (formationList.size() > 0) {
 
-                firstFormations.add(formationList.get(1));
-                firstFormations.add(formationList.get(2));
-                firstFormations.add(formationList.get(3));
+                Random r;
+                int index;
+                ArrayList<Integer> ids = new ArrayList<>();
 
-                TitleList newsList = new TitleList("Nouveautés", firstFormations);
-                titleLists.add(newsList);
+                while (firstFormations.size() < 3 && firstFormations.size() < formationList.size()) {
+
+                    r = new Random();
+                    index = r.nextInt(formationList.size());
+
+                    if (!ids.contains(index)) {
+                        firstFormations.add(formationList.get(index));
+                        ids.add(index);
+                    }
+                }
 
                 TitleList recommendedList = new TitleList("Recommandé pour vous", firstFormations);
                 titleLists.add(recommendedList);
@@ -163,7 +188,7 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
             swipeRefreshLayout.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
 
-            if (formationList.size() > 0) {
+            if (formationList.size() > 0 || newFormations.size() > 0) {
                 mEmptyViewContainer.setVisibility(View.GONE);
             } else {
                 mEmptyViewContainer.setVisibility(View.VISIBLE);
@@ -175,27 +200,23 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     private void getListFormations() {
         //Log.d("LOG", "getListFormations");
 
-        titleLists.clear();
-
+        newFormations.clear();
         formationList.clear();
         swipeRefreshLayout.setRefreshing(true);
         mEmptyViewContainer.setRefreshing(true);
+        mEmptyViewContainer.setVisibility(View.GONE);
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String listString = preferences.getString("recommended_categories", "");
         String[] list = listString.split(";");
 
-        final int listLength = list.length;
+        final int listLength = list.length <= 1 ? 1 : list.length + 1;
 
         if (list.length > 1) {
 
             for (String id : list) {
 
                 if (!id.isEmpty()) {
-
-                    mEmptyViewContainer.setVisibility(View.GONE);
-                    swipeRefreshLayout.setRefreshing(true);
-                    mEmptyViewContainer.setRefreshing(true);
 
                     Formation.getSubcategoryFormations(id, new Formation.getFormationListCallback() {
                         @Override
@@ -209,8 +230,6 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
                                     formationList.add(obj);
                                 }
                             }
-
-                            titleListAdapter.notifyDataSetChanged();
 
                             updateAdapter(listLength);
                         }
@@ -234,8 +253,34 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
         else {
             swipeRefreshLayout.setRefreshing(false);
             mEmptyViewContainer.setRefreshing(false);
-            listAdapter.notifyDataSetChanged();
+            titleListAdapter.notifyDataSetChanged();
         }
+
+        Formation.getSubcategoryFormations("55ee4121ab734aeb0a4781d3", new Formation.getFormationListCallback() {
+            @Override
+            public void onGetFinished(List<Formation> formations) {
+
+                for (int i = 0; i < formations.size(); i++) {
+
+                    Formation obj = formations.get(i);
+
+                    if (obj.getProgress() <= 0) {
+                        newFormations.add(obj);
+                    }
+                }
+
+                updateAdapter(listLength);
+            }
+
+            @Override
+            public void onGetFail(String error) {
+
+                updateAdapter(listLength);
+
+                Toast toast = Toast.makeText(ElephormApp.getInstance().getBaseContext(), error, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 
 
