@@ -17,8 +17,6 @@
     <string name="hello_world">Hello world!</string>
 
     <string name="title_activity_video">VideoActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_lessons">LessonsActivity</string>
     <string name="home_empty_text">Il n\'y a pas de nouvelles vidéos pour le moment !</string>
     <string name="tab3_empty_text">Votre historique est vide !</string>
@@ -27,7 +25,7 @@
     <string name="items_label">Sommaire</string>
     <string name="lesson_count_label">" leçons"</string>
 
-    <string name="dialog_exit_msg">Êtes vous certain(e) de vouloir supprimer toutes les données enregistées ?</string>
+    <string name="dialog_exit_msg">Êtes-vous certain(e) de vouloir supprimer toutes les données enregistées ?</string>
     <string name="dialog_exit_title">Attention</string>
 
     <string name="yes">Oui</string>
