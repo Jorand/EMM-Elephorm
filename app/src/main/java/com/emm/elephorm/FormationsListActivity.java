@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -31,32 +30,27 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formations_list);
 
-        // TOOLBAR
         Toolbar toolbar = (Toolbar) findViewById(R.id.Ftoolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
 
-        // GET EXTRA
         Intent intent = getIntent();
         subcategoryId = intent.getStringExtra("EXTRA_SUBCATEGORY_ID");
         String subcategoryTitle = intent.getStringExtra("EXTRA_SUBCATEGORY_NAME");
 
-        // SET TOOLBAR TITLE
         if (actionBar != null) {
             actionBar.setHomeButtonEnabled(true);
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle(subcategoryTitle);
         }
 
-        // INIT LISTVIEW
+        // Gestion de la listview
         listView = (ListView) findViewById(R.id.formations_list);
-        //View headerView = getLayoutInflater().inflate(R.layout.list_header, null, false);
-        //listView.addHeaderView(headerView);
 
         listAdapter = new FormationListAdapter(this, formationList);
         listView.setAdapter(listAdapter);
 
-        // LISTVIEW EVENTS
+        // Gestion du clic sur un élément
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
@@ -69,35 +63,29 @@ public class FormationsListActivity extends AppActivity implements SwipeRefreshL
             }
         });
 
-        // SWIPE REFRESH
+        // refresh en swipe
         swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         swipeRefreshLayout.setOnRefreshListener(this);
-        //swipeRefreshLayout.setEnabled(false);
 
     }
 
     @Override
     public void onResume(){
-        // CREATE RESUME UPDATE
-        //Log.d("LOG", "onResume");
         super.onResume();
         getListFormations();
     }
 
     @Override
     public void onRefresh() {
-        // SWIPE REFRESH UPDATE
-        //Log.d("LOG", "onRefresh");
         getListFormations();
     }
 
+    /**
+     * Récupère la liste des formations et l'affiche
+     */
     private void getListFormations() {
-        //Log.d("LOG", "update : "+subcategoryId);
-
-        formationList.clear(); // Clear list
-
-        Log.d("LOG", subcategoryId);
+        formationList.clear();
 
         Formation.getSubcategoryFormations(subcategoryId, new Formation.getFormationListCallback() {
             @Override

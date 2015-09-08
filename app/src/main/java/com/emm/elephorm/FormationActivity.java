@@ -59,10 +59,12 @@ public class FormationActivity extends AppActivity {
             actionBar.setTitle(FormationTitle);
         }
 
+        // Mise à jour du progrès dans la formation
         progress = (ProgressBar) findViewById(R.id.progress);
         Drawable draw = getDrawable(R.drawable.custom_progressbar);
         progress.setProgressDrawable(draw);
 
+        // Mise en place du teaser
         NetworkImageView poster = (NetworkImageView) findViewById(R.id.poster);
         poster.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -83,6 +85,9 @@ public class FormationActivity extends AppActivity {
 
     }
 
+    /**
+     * Récupère les informations de la formation et les affiche
+     */
     private void getFormation() {
 
         myFormation = null;

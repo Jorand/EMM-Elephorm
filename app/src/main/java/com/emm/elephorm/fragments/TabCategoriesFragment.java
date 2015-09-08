@@ -30,16 +30,15 @@ public class TabCategoriesFragment extends Fragment implements SwipeRefreshLayou
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         View v = inflater.inflate(R.layout.fragment_tab_categories, container, false);
 
-        // INIT EXPENDABLELIST
+        // Liste extensible
         ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.expandableListView);
         listAdapter = new CategoryExpandableListAdapter(v.getContext(), listCategories);
         expListView.setAdapter(listAdapter);
-        //expListView.setDivider(null);
 
-        // EXPENDABLELIST EVENT
+        // Clic sur un élément
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -56,26 +55,22 @@ public class TabCategoriesFragment extends Fragment implements SwipeRefreshLayou
             }
         });
 
-        // SWIPE REFRESH
+        // Refresh en swipe
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         swipeRefreshLayout.setOnRefreshListener(this);
-        //swipeRefreshLayout.setEnabled(false);
 
         return v;
     }
 
     @Override
     public void onResume(){
-        // CREATE RESUME UPDATE
-        //Log.d("LOG", "t2 onResume");
         super.onResume();
         prepareListCategory(false);
     }
 
     @Override
     public void onRefresh() {
-        // SWIPE REFRESH UPDATE
         prepareListCategory(false);
     }
 
@@ -102,7 +97,7 @@ public class TabCategoriesFragment extends Fragment implements SwipeRefreshLayou
 
                 listAdapter.notifyDataSetChanged();
 
-                // stopping swipe refresh
+                // stop swipe refresh
                 swipeRefreshLayout.setRefreshing(false);
             }
 

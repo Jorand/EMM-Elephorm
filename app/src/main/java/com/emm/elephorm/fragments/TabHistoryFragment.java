@@ -10,15 +10,12 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
 import com.emm.elephorm.R;
 import com.emm.elephorm.adapters.FormationExpandableListAdapter;
-import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.app.ElephormApp;
 import com.emm.elephorm.models.Formation;
 import com.emm.elephorm.models.TitleList;
@@ -35,59 +32,33 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
     private View v;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout mEmptyViewContainer;
-    private FormationListAdapter listAdapter;
     private List<Formation> formationList = new ArrayList<>();
 
     private List<Formation> currentFormationList = new ArrayList<>();
     private List<Formation> finishedFormationList = new ArrayList<>();
-    private ListView listView;
 
     private FormationExpandableListAdapter titleListAdapter;
     private ArrayList<TitleList> titleLists = new ArrayList<>();
 
+    private int current = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         v = inflater.inflate(R.layout.fragment_tab_history, container, false);
 
-        // SWIPE REFRESH
+        // refresh en swipe
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         mEmptyViewContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout_emptyView);
         onCreateSwipeToRefresh(swipeRefreshLayout);
         onCreateSwipeToRefresh(mEmptyViewContainer);
-        //swipeRefreshLayout.setEnabled(false);
 
-        /*
-
-        // INIT LISTVIEW
-        listView = (ListView) v.findViewById(R.id.list);
-        listView.setEmptyView(mEmptyViewContainer);
-        listAdapter = new FormationListAdapter(getActivity(), formationList);
-        listView.setAdapter(listAdapter);
-
-        // EVENT LISTVIEW
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Formation formation = formationList.get(position);
-                Intent intent = new Intent(getActivity(), FormationActivity.class);
-                String formationId = formation.getEan();
-                intent.putExtra("EXTRA_FORMATION_ID", formationId);
-                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
-                startActivity(intent);
-            }
-        });
-
-        */
-
-        // INIT EXPENDABLELIST
+        // Liste extensible
         ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.historyExpandableList);
-        //expListView.setDivider(null);
-
         titleListAdapter = new FormationExpandableListAdapter(v.getContext(), titleLists);
         expListView.setAdapter(titleListAdapter);
 
-        // EXPENDABLELIST EVENT
+        // Clic sur un élément
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -106,28 +77,30 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
         return v;
     }
 
+    /**
+     * Rafraichit le layout
+     * @param refreshLayout
+     */
     private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
-        // INIT SwipeRefreshLayout
         refreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         refreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onResume(){
-        // CREATE RESUME UPDATE
-        //Log.d("LOG", "t3 onResume");
         super.onResume();
         updateList();
     }
 
     @Override
     public void onRefresh() {
-        // SWIPE REFRESH UPDATE
         updateList();
     }
 
-    private int current = 0;
-
+    /**
+     * Met à jour l'adapter
+     * @param lengh longueur de la liste
+     */
     private void updateAdapter(int lengh) {
 
         current++;
@@ -160,18 +133,21 @@ public class TabHistoryFragment extends Fragment implements SwipeRefreshLayout.O
         }
     }
 
+    /**
+     * Met à jour les listes à partir des préférences
+     */
     private void updateList() {
-        //Log.d("LOG", "updateList");
-
         formationList.clear();
 
         getFormations("current_formations");
         getFormations("finished_formations");
     }
 
+    /**
+     * Récupère la liste de formations dans les préférences
+     * @param key nom de la liste
+     */
     private void getFormations(String key) {
-        //Log.d("LOG", "getFormations "+key);
-
         final String listType = key;
 
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());

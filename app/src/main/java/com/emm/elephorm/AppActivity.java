@@ -6,6 +6,9 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+/**
+ * Activité abstraite pour hériter de méthodes communes aux activités
+ */
 public abstract class AppActivity extends AppCompatActivity {
 
     protected SharedPreferences preferences;

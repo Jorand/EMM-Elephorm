@@ -3,9 +3,7 @@ package com.emm.elephorm;
 import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
-
 import android.os.Bundle;
-
 import android.widget.MediaController;
 import android.widget.VideoView;
 
@@ -53,8 +51,6 @@ public class VideoActivity extends Activity implements MediaPlayer.OnCompletionL
     @Override
     public void onResume() {
         super.onResume();
-        //v.seekTo(stopPosition);
-        //v.start();
         v.resume();
     }
 

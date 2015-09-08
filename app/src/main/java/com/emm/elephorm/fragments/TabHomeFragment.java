@@ -7,29 +7,18 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.emm.elephorm.FormationActivity;
-import com.emm.elephorm.FormationsListActivity;
 import com.emm.elephorm.R;
-import com.emm.elephorm.adapters.CategoryExpandableListAdapter;
 import com.emm.elephorm.adapters.FormationExpandableListAdapter;
-import com.emm.elephorm.adapters.FormationListAdapter;
 import com.emm.elephorm.app.ElephormApp;
-import com.emm.elephorm.models.Category;
 import com.emm.elephorm.models.Formation;
-import com.emm.elephorm.models.Subcategory;
 import com.emm.elephorm.models.TitleList;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +30,6 @@ import java.util.Random;
 public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     
     private View v;
-    private FormationListAdapter listAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private SwipeRefreshLayout mEmptyViewContainer;
     private List<Formation> formationList = new ArrayList<>();
@@ -53,52 +41,25 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
     ArrayList<Formation> newFormations = new ArrayList<>();
     ArrayList<Formation> newFirstFormations = new ArrayList<>();
 
+    private int current = 0;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         v = inflater.inflate(R.layout.fragment_tab_home, container, false);
 
-        // SWIPE REFRESH
+        // refresh en swipe
         swipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipe_refresh_layout);
         mEmptyViewContainer = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout_emptyView);
         onCreateSwipeToRefresh(swipeRefreshLayout);
         onCreateSwipeToRefresh(mEmptyViewContainer);
-        //swipeRefreshLayout.setEnabled(false);
-        /*
 
-        // INIT LISTVIEW
-        ListView listView = (ListView) v.findViewById(R.id.homeList);
-        listView.setEmptyView(mEmptyViewContainer);
-        listAdapter = new FormationListAdapter(getActivity(), formationList);
-        listView.setAdapter(listAdapter);
-
-        //ViewGroup header = (ViewGroup)inflater.inflate(R.layout.list_header, listView, false);
-        //TextView headerTitle = (TextView) header.findViewById(R.id.headerTitle);
-        //headerTitle.setText("Nouveautés");
-        //listView.addHeaderView(header, null, false);
-
-        // LISTVIEW EVENT
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Formation formation = formationList.get(position);
-                Intent intent = new Intent(getActivity(), FormationActivity.class);
-                String formationId = formation.getEan();
-                intent.putExtra("EXTRA_FORMATION_ID", formationId);
-                intent.putExtra("EXTRA_FORMATION_TITLE", formation.getTitle());
-                startActivity(intent);
-            }
-        });
-        */
-
-        // INIT EXPENDABLELIST
+        // Liste extensible
         ExpandableListView expListView = (ExpandableListView) v.findViewById(R.id.homeExpandableFormationsList);
-        //expListView.setDivider(null);
-
         titleListAdapter = new FormationExpandableListAdapter(v.getContext(), titleLists);
         expListView.setAdapter(titleListAdapter);
 
-        // EXPENDABLELIST EVENT
+        // Clic sur un élément
         expListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -117,29 +78,31 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
         return v;
     }
 
+    /**
+     * Rafraichit le layout
+     * @param refreshLayout
+     */
     private void onCreateSwipeToRefresh(SwipeRefreshLayout refreshLayout) {
-        // INIT SwipeRefreshLayout
         refreshLayout.setColorSchemeResources(R.color.ColorPrimary);
         refreshLayout.setOnRefreshListener(this);
     }
 
     @Override
     public void onResume(){
-        // CREATE RESUME UPDATE
-        //Log.d("LOG", "t1 onResume");
         super.onResume();
         getListFormations();
     }
 
     @Override
     public void onRefresh() {
-        // SWIPE REFRESH UPDATE
-        //Log.d("LOG", "t1 onRefresh");
         getListFormations();
     }
 
-    private int current = 0;
 
+    /**
+     * Met à jour l'adapter
+     * @param lengh longueur de la liste
+     */
     private void updateAdapter(int lengh) {
 
         current++;
@@ -196,10 +159,11 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
             current = 0;
         }
     }
-    
-    private void getListFormations() {
-        //Log.d("LOG", "getListFormations");
 
+    /**
+     * Récupère la liste de formations à partir des catégories dans les préférences
+     */
+    private void getListFormations() {
         newFormations.clear();
         formationList.clear();
         swipeRefreshLayout.setRefreshing(true);
@@ -282,6 +246,5 @@ public class TabHomeFragment extends Fragment implements SwipeRefreshLayout.OnRe
             }
         });
     }
-
 
 }

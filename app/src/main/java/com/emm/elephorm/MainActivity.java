@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -48,6 +47,9 @@ public class MainActivity extends AppActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Gestion des onglets
+     */
     private void initTabBar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,6 +86,9 @@ public class MainActivity extends AppActivity {
         });
     }
 
+    /**
+     * Suppression de l'historique
+     */
     private void confirmReset() {
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -95,7 +100,9 @@ public class MainActivity extends AppActivity {
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
-                        resetPreferences();
+                        SharedPreferences.Editor editor = preferences.edit();
+                        editor.clear();
+                        editor.apply();
 
                         finish();
                         startActivity(getIntent());
@@ -109,14 +116,5 @@ public class MainActivity extends AppActivity {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-    }
-
-    private void resetPreferences() {
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.clear();
-        editor.apply();
-
     }
 }

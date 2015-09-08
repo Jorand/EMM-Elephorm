@@ -56,28 +56,29 @@ public class Formation {
 
     public Formation(JSONObject data) {
         try {
-            title           = data.getString("title");
-            subtitle        = data.getString("subtitle");
-            productUrl      = data.getString("product_url");
-            price           = !data.getString("price").equals("null") ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
-            description     = data.getString("description");
-            duration        = !data.getString("duration").equals("null") ? formatDuration((int) Double.parseDouble(data.getString("duration"))) : "00:00:00";
-            objectives      = data.getString("objectives");
-            prerequisites   = data.getString("prerequisites");
-            qcmUrl          = data.getString("qcm");
-            teaserText      = data.getString("teaser_text");
-            teaser          = data.getString("teaser");
-            poster          = data.getString("poster");
-            free            = Boolean.parseBoolean(data.getString("free"));
-            videoCount      = !(data.getString("video_count").equals("null")) ? Integer.parseInt(data.getString("video_count"), 10) : 0;
-            active          = Boolean.parseBoolean(data.getString("active"));
-            publishedDate   = data.getString("publishedDate");
-            ean             = data.getString("ean13");
+            title = data.getString("title");
+            subtitle = data.getString("subtitle");
+            productUrl = data.getString("product_url");
+            price = !data.getString("price").equals("null") ? round(Double.parseDouble(data.getString("price")), 2) + " €" : "0.00 €";
+            description = data.getString("description");
+            duration = !data.getString("duration").equals("null") ? formatDuration((int) Double.parseDouble(data.getString("duration"))) : "00:00:00";
+            objectives = data.getString("objectives");
+            prerequisites = data.getString("prerequisites");
+            qcmUrl = data.getString("qcm");
+            teaserText = data.getString("teaser_text");
+            teaser = data.getString("teaser");
+            poster = data.getString("poster");
+            free = Boolean.parseBoolean(data.getString("free"));
+            videoCount = !(data.getString("video_count").equals("null")) ? Integer.parseInt(data.getString("video_count"), 10) : 0;
+            active = Boolean.parseBoolean(data.getString("active"));
+            publishedDate = data.getString("publishedDate");
+            ean = data.getString("ean13");
 
             JSONObject tempObj = new JSONObject(data.getString("rating"));
             rating = !tempObj.getString("average").equals("null") ? Double.parseDouble(tempObj.getString("average")) : 0;
 
-            if(data.getString("category").contains("{")) {
+            // Gestion des category et subcategory
+            if (data.getString("category").contains("{")) {
                 tempObj = new JSONObject(data.getString("category"));
                 categoryId = tempObj.getString("_id");
                 categoryName = tempObj.getString("title");
@@ -85,7 +86,7 @@ public class Formation {
                 categoryId = data.getString("category");
                 categoryName = "";
             }
-            if(data.getString("subcategory").contains("{")) {
+            if (data.getString("subcategory").contains("{")) {
                 tempObj = new JSONObject(data.getString("subcategory"));
                 subcategoryId = tempObj.getString("_id");
                 subcategoryName = tempObj.getString("title");
@@ -95,7 +96,7 @@ public class Formation {
             }
 
             // Gestion des items
-            if(data.has("items")) {
+            if (data.has("items")) {
                 JSONArray items = new JSONArray(data.getString("items"));
 
                 this.items = Lesson.getLessonList(items);
@@ -104,96 +105,6 @@ public class Formation {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-    }
-
-    //define callback interface
-    public interface getFormationCallback {
-        void onGetFinished(Formation formation);
-        void onGetFail(String error);
-    }
-
-    /**
-     * Renvoie un formation à partir de son code ean
-     * @param ean : code ean de la formation
-     */
-    public static void getFormation(String ean, getFormationCallback cb) {
-        final getFormationCallback callback = cb;
-
-        // Test de connexion
-        ConnectivityManager cm =
-                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
-            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
-        } else {
-            JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        Formation formation = new Formation(response);
-                        callback.onGetFinished(formation);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
-
-                    }
-                }
-            );
-            ElephormApp.getInstance().getRequestQueue().add(request);
-        }
-    }
-
-    //define callback interface
-    public interface getFormationListCallback {
-        void onGetFinished(List<Formation> formations);
-        void onGetFail(String error);
-    }
-
-    /**
-     * Renvoie le tableau des formations de la sous-catégorie indiquée
-     * @param id : id de la sous-catégorie
-     */
-    public static void getSubcategoryFormations(String id, getFormationListCallback cb) {
-        final getFormationListCallback callback = cb;
-        // Test de connexion
-        ConnectivityManager cm =
-                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-
-        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
-            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
-        } else {
-            JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
-                new Response.Listener<JSONArray>() {
-                    @Override
-                    public void onResponse(JSONArray response) {
-                        JSONObject obj;
-                        List<Formation> formations = new ArrayList<>();
-                        for (int i = 0; i < response.length(); i++) {
-                            try {
-                                obj = response.getJSONObject(i);
-                                formations.add(new Formation(obj));
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        callback.onGetFinished(formations);
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
-
-                    }
-                }
-            );
-            ElephormApp.getInstance().getRequestQueue().add(request);
         }
     }
 
@@ -216,6 +127,11 @@ public class Formation {
         }
     }
 
+    /**
+     * Ajoute la donnée String dans la liste des préférences indiquée
+     * @param listName liste à remplir dans les préférences
+     * @param id donnée à ajouter
+     */
     protected void addIdFromList(String listName, String id) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
         String listString = preferences.getString(listName, "");
@@ -239,6 +155,11 @@ public class Formation {
         }
     }
 
+    /**
+     * Supprime la donnée String dans la liste des préférences indiquée
+     * @param listName liste à remplir dans les préférences
+     * @param id donnée à supprimer
+     */
     protected void removeIdFromList(String listName, String id) {
         final SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ElephormApp.getInstance().getBaseContext());
         String listString = preferences.getString(listName, "");
@@ -307,7 +228,7 @@ public class Formation {
     }
 
     /**
-     * Convertit la durée au format HH:mm:ss
+     * Convertit la durée à un format lisible
      * @return durée convertie
      */
     protected String formatDuration(int duration) {
@@ -333,6 +254,98 @@ public class Formation {
             stringItem = "" + timeItem;
 
         return stringItem;
+    }
+
+    /** STATICS **/
+
+    //define callback interface
+    public interface getFormationCallback {
+        void onGetFinished(Formation formation);
+        void onGetFail(String error);
+    }
+
+    /**
+     * Renvoie un formation à partir de son code ean
+     * @param ean : code ean de la formation
+     */
+    public static void getFormation(String ean, getFormationCallback cb) {
+        final getFormationCallback callback = cb;
+
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else {
+            JsonObjectRequest request = new JsonObjectRequest("http://eas.elephorm.com/api/v1/trainings/" + ean,
+                    new Response.Listener<JSONObject>() {
+                        @Override
+                        public void onResponse(JSONObject response) {
+                            Formation formation = new Formation(response);
+                            callback.onGetFinished(formation);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+
+                        }
+                    }
+            );
+            ElephormApp.getInstance().getRequestQueue().add(request);
+        }
+    }
+
+    //define callback interface
+    public interface getFormationListCallback {
+        void onGetFinished(List<Formation> formations);
+        void onGetFail(String error);
+    }
+
+    /**
+     * Renvoie le tableau des formations de la sous-catégorie indiquée
+     * @param id : id de la sous-catégorie
+     */
+    public static void getSubcategoryFormations(String id, getFormationListCallback cb) {
+        final getFormationListCallback callback = cb;
+        // Test de connexion
+        ConnectivityManager cm =
+                (ConnectivityManager)ElephormApp.getInstance().getBaseContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+
+        if(activeNetwork == null || !activeNetwork.isConnectedOrConnecting()) {
+            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_connexion_error));
+        } else {
+            JsonArrayRequest request = new JsonArrayRequest("http://eas.elephorm.com/api/v1/subcategories/" + id + "/trainings",
+                    new Response.Listener<JSONArray>() {
+                        @Override
+                        public void onResponse(JSONArray response) {
+                            JSONObject obj;
+                            List<Formation> formations = new ArrayList<>();
+                            for (int i = 0; i < response.length(); i++) {
+                                try {
+                                    obj = response.getJSONObject(i);
+                                    formations.add(new Formation(obj));
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            callback.onGetFinished(formations);
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            callback.onGetFail(ElephormApp.getInstance().getString(R.string.global_volley_error));
+
+                        }
+                    }
+            );
+            ElephormApp.getInstance().getRequestQueue().add(request);
+        }
     }
 
     /** Getters & setters **/

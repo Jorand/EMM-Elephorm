@@ -54,7 +54,7 @@ public class Lesson {
     }
 
     /**
-     * Convertit la durée au format HH:mm:ss
+     * Convertit la durée à un format lisible
      * @return durée convertie
      */
     protected String formatDuration(int duration) {
@@ -82,6 +82,9 @@ public class Lesson {
         return stringItem;
     }
 
+    /**
+     * Enregistre la leçon comme vue
+     */
     public void setViewed() {
         if(viewed)
             return;
@@ -96,6 +99,11 @@ public class Lesson {
 
     /** STATICS **/
 
+    /**
+     * Renvoie la liste des leçons
+     * @param data liste des leçons
+     * @return liste des leçons
+     */
     public static List<Lesson> getLessonList(JSONArray data) {
         List<Lesson> lessons = new ArrayList<>();
         for(int i = 0;i<data.length();i++) {
